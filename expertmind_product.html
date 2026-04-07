@@ -1,0 +1,2828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExpertMind — Organisational Memory Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f1f5f9;
+  --bg2: #ffffff;
+  --bg3: #ffffff;
+  --bg4: #f8fafc;
+  --surface: #f1f5f9;
+  --surface2: #e2e8f0;
+  --border: #e2e8f0;
+  --border2: #cbd5e1;
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #94a3b8;
+  --green: #2563eb;
+  --green2: #1d4ed8;
+  --green-dim: rgba(37,99,235,0.08);
+  --success: #059669;
+  --success-dim: rgba(5,150,105,0.1);
+  --amber: #d97706;
+  --amber-dim: rgba(217,119,6,0.1);
+  --red: #dc2626;
+  --red-dim: rgba(220,38,38,0.08);
+  --blue: #2563eb;
+  --blue-dim: rgba(37,99,235,0.1);
+  --accent: var(--green);
+  --ink: #ffffff;
+  --r-sm: 8px;
+  --r: 10px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-card: 0 4px 24px rgba(15,23,42,0.07), 0 1px 2px rgba(15,23,42,0.04);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Syne', var(--font-sans);
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --lh-tight: 1.25;
+  --lh-body: 1.6;
+  --ls-caps: 0.08em;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  background-image: radial-gradient(ellipse 100% 60% at 50% -10%, rgba(37,99,235,0.06), transparent 55%);
+  color: var(--text);
+  min-height: 100%;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.sans { font-family: var(--font-display); }
+.mono { font-family: var(--font-mono); }
+*:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+button:focus-visible, .nav-item:focus-visible, summary:focus-visible { outline-offset: 3px; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 244px; flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  padding: 0; position: relative; z-index: 10;
+  min-height: 0; height: 100%; overflow: hidden;
+  box-shadow: 1px 0 0 var(--border), 4px 0 24px rgba(15,23,42,0.04);
+}
+.logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-mark {
+  font-family: var(--font-display); font-weight: 800; font-size: 18px;
+  color: var(--green); letter-spacing: -0.03em; line-height: var(--lh-tight);
+}
+.logo-sub { font-size: 11px; color: var(--text3); letter-spacing: var(--ls-caps); text-transform: uppercase; margin-top: 6px; font-family: var(--font-mono); font-weight: 500; }
+.nav { padding: 14px 12px; flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.nav-section-label { font-size: 11px; font-weight: 600; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--text3); padding: 12px 12px 8px; font-family: var(--font-sans); }
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: var(--r);
+  font-family: var(--font-sans); font-size: 14px; font-weight: 500;
+  color: var(--text2); cursor: pointer; transition: background .18s ease, color .18s ease;
+  margin-bottom: 3px; position: relative;
+}
+.nav-item:hover { background: var(--surface); color: var(--text); }
+.nav-item.active { background: var(--green-dim); color: var(--green); box-shadow: 0 0 0 1px rgba(37,99,235,0.12); }
+.nav-item .icon { width: 18px; height: 18px; opacity: .72; flex-shrink: 0; stroke-width: 1.4; }
+.nav-item.active .icon { opacity: 1; }
+.nav-badge {
+  margin-left: auto; font-size: 11px; font-weight: 700;
+  background: var(--red-dim); color: var(--red);
+  padding: 3px 8px; border-radius: 999px; font-family: var(--font-mono);
+  min-width: 1.5rem; text-align: center;
+}
+.nav-badge.amber { background: var(--amber-dim); color: var(--amber); }
+.sidebar-footer {
+  padding: 16px 18px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg4);
+}
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 11px; font-weight: 700; color: var(--green); flex-shrink: 0; aspect-ratio: 1; }
+.user-info .name { font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+.user-info .role { font-size: 12px; color: var(--text3); margin-top: 2px; line-height: 1.35; }
+
+/* MAIN */
+.main { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+.topbar {
+  min-height: 60px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px 0 32px; background: rgba(255,255,255,0.85); flex-shrink: 0;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.page-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+.topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tb-btn {
+  font-family: var(--font-sans); font-size: 13px; font-weight: 600;
+  padding: 9px 16px; border-radius: var(--r); border: 1px solid var(--border2);
+  background: var(--surface); color: var(--text2); cursor: pointer; transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+.tb-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+.tb-btn.primary { background: linear-gradient(165deg, var(--green) 0%, var(--green2) 100%); color: var(--ink); border-color: transparent; box-shadow: 0 2px 12px rgba(37,99,235,0.25); }
+.tb-btn.primary:hover { filter: brightness(1.06); }
+.content { flex: 1; min-height: 0; overflow-y: auto; padding: 28px 32px 40px; max-width: 1440px; width: 100%; margin: 0 auto; -webkit-overflow-scrolling: touch; }
+
+/* SCREENS */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* CARDS & LAYOUT */
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 28px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 28px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+.grid-2-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 28px; }
+@media (max-width: 1200px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .grid-4, .grid-3, .grid-2, .grid-2-3 { grid-template-columns: 1fr; }
+  .content { padding: 20px 18px 32px; }
+}
+.card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.card:hover { border-color: var(--border2); }
+.card-title {
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--text3); margin-bottom: 14px; line-height: 1.3;
+}
+.metric-val {
+  font-family: var(--font-sans); font-size: 32px; font-weight: 800; color: var(--text);
+  line-height: 1.05; margin-bottom: 8px; letter-spacing: -0.01em; font-variant-numeric: tabular-nums;
+}
+.metric-val.green { color: var(--success); }
+.metric-val.amber { color: var(--amber); }
+.metric-val.red { color: var(--red); }
+.metric-sub { font-size: 14px; color: var(--text2); line-height: 1.45; }
+
+/* TAGS */
+.tag { display: inline-block; font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; line-height: 1.2; }
+.tag-green { background: var(--success-dim); color: #047857; }
+.tag-amber { background: var(--amber-dim); color: var(--amber); }
+.tag-red { background: var(--red-dim); color: var(--red); }
+.tag-blue { background: var(--blue-dim); color: var(--blue); }
+.tag-gray { background: var(--surface); color: var(--text2); border: 1px solid var(--border); }
+
+/* RISK METER */
+.risk-ring { position: relative; width: 96px; height: 96px; aspect-ratio: 1; flex-shrink: 0; }
+.risk-ring svg { transform: rotate(-90deg); width: 100%; height: 100%; display: block; }
+.risk-ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.risk-ring-num { font-family: var(--font-sans); font-size: 22px; font-weight: 800; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.risk-ring-label { font-size: 10px; color: var(--text3); font-family: var(--font-sans); letter-spacing: var(--ls-caps); text-transform: uppercase; margin-top: 2px; }
+
+/* PROGRESS BARS */
+.prog-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.prog-label { font-size: 13px; color: var(--text2); width: 150px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prog-wrap { flex: 1; background: var(--surface); border-radius: 999px; height: 8px; overflow: hidden; border: 1px solid var(--border); }
+.prog-bar { height: 100%; border-radius: 999px; transition: width .6s ease; }
+.pb-green { background: linear-gradient(90deg, #047857, var(--success)); }
+.pb-amber { background: linear-gradient(90deg, #c9a03a, var(--amber)); }
+.pb-red { background: linear-gradient(90deg, #c06868, var(--red)); }
+.prog-val { font-family: var(--font-mono); font-size: 12px; color: var(--text3); min-width: 2.5rem; text-align: right; font-weight: 500; }
+
+/* PEOPLE LIST */
+.person-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 10px; margin: 0 -10px; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .18s ease; border-radius: var(--r-sm);
+}
+.person-row:last-child { border-bottom: none; }
+.person-row:hover { background: rgba(15,23,42,0.03); }
+.person-av { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 12px; font-weight: 700; flex-shrink: 0; aspect-ratio: 1; border: 1px solid var(--border); }
+.av-green { background: var(--success-dim); color: var(--success); }
+.av-amber { background: var(--amber-dim); color: var(--amber); }
+.av-red { background: var(--red-dim); color: var(--red); }
+.av-blue { background: var(--blue-dim); color: var(--blue); }
+.person-info { flex: 1; }
+.person-name { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+.person-role { font-size: 13px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+.person-right { text-align: right; }
+.person-status { font-size: 12px; }
+
+/* DEPARTURE ALERT */
+.alert-row {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 16px; border-radius: var(--r-lg);
+  background: var(--red-dim); border: 1px solid rgba(240,144,144,.22);
+  margin-bottom: 10px; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease;
+}
+.alert-row:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(15,23,42,0.08); }
+.alert-row.amber { background: var(--amber-dim); border-color: rgba(232,188,74,.25); }
+.alert-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.ad-red { background: var(--red); }
+.ad-amber { background: var(--amber); }
+.alert-content { flex: 1; }
+.alert-name { font-family: var(--font-sans); font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+.alert-detail { font-size: 13px; color: var(--text2); margin-top: 4px; line-height: 1.45; }
+.alert-action {
+  font-family: var(--font-sans); font-size: 12px; font-weight: 700;
+  padding: 6px 12px; border-radius: var(--r-sm); border: none;
+  background: rgba(248,113,113,.2); color: var(--red); cursor: pointer;
+  transition: background .15s; white-space: nowrap; align-self: center;
+}
+.alert-action:hover { background: rgba(248,113,113,.35); }
+.alert-action.amber { background: rgba(251,191,36,.2); color: var(--amber); }
+.alert-action.amber:hover { background: rgba(251,191,36,.35); }
+
+/* VERA SCREEN */
+.vera-chat { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+.chat-msg { display: flex; gap: 12px; align-items: flex-start; }
+.chat-msg.user { flex-direction: row-reverse; }
+.chat-av { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-sans); font-size: 12px; font-weight: 700; aspect-ratio: 1; }
+.chat-av.vera { background: var(--green-dim); color: var(--green); border: 1px solid rgba(37,99,235,0.2); }
+.chat-av.user { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+.chat-bubble {
+  max-width: min(72%, 36rem); padding: 14px 18px; border-radius: var(--r-lg);
+  font-size: 15px; line-height: 1.65; color: var(--text);
+}
+.chat-bubble.vera { background: var(--bg4); border: 1px solid var(--border2); border-top-left-radius: 4px; box-shadow: var(--shadow-sm); }
+.chat-bubble.user { background: var(--surface); color: var(--text); border: 1px solid var(--border2); border-top-right-radius: 4px; }
+.chat-bubble .typing { display: inline-flex; gap: 4px; align-items: center; }
+.typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 1.2s infinite; }
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%,100%{opacity:.3} 50%{opacity:1} }
+.vera-input-row { display: flex; gap: 10px; }
+.vera-input {
+  flex: 1; background: var(--bg4); border: 1px solid var(--border2);
+  border-radius: var(--r); padding: 12px 16px; color: var(--text);
+  font-family: var(--font-body); font-size: 15px; outline: none; resize: none;
+  transition: border-color .2s ease, box-shadow .2s ease; line-height: 1.5;
+}
+.vera-input:focus { border-color: rgba(37,99,235,0.45); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+.vera-send {
+  background: linear-gradient(165deg, var(--green), var(--green2)); color: var(--ink); border: none;
+  border-radius: var(--r); padding: 12px 20px; font-family: var(--font-sans);
+  font-size: 13px; font-weight: 700; cursor: pointer; transition: filter .15s ease;
+  box-shadow: 0 2px 12px rgba(37,99,235,0.22);
+}
+.vera-send:hover { filter: brightness(1.07); }
+.vera-progress-bar {
+  background: var(--surface); border-radius: 999px; height: 6px; margin-bottom: 8px; overflow: hidden; border: 1px solid var(--border);
+}
+.vera-progress-fill { height: 100%; background: linear-gradient(90deg, var(--green2), var(--green)); border-radius: 999px; transition: width 1s ease; box-shadow: 0 0 12px rgba(37,99,235,0.2); }
+.vera-phase-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 18px; font-weight: 500; }
+
+/* KNOWLEDGE GRAPH */
+.graph-container {
+  position: relative; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r-lg); overflow: hidden; margin-bottom: 20px;
+  aspect-ratio: 16 / 9; min-height: 260px; max-height: min(52vh, 520px); height: auto;
+  box-shadow: var(--shadow-sm);
+}
+.graph-svg { width: 100%; height: 100%; display: block; }
+.graph-node { cursor: pointer; }
+.graph-node circle { transition: r .2s, fill .2s; }
+.graph-node:hover circle { r: 22; }
+.graph-node text { font-family: var(--font-sans); font-size: 11px; font-weight: 700; fill: var(--text); pointer-events: none; }
+.graph-legend { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 18px; }
+.gl-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); font-family: var(--font-sans); font-weight: 500; }
+.gl-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+.node-detail {
+  background: var(--bg4); border: 1px solid var(--border2);
+  border-radius: var(--r-lg); padding: 18px 20px; margin-top: 12px;
+  display: none; box-shadow: var(--shadow-sm);
+}
+.node-detail.visible { display: block; }
+.nd-title { font-family: var(--font-sans); font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; letter-spacing: -0.02em; }
+.nd-type { font-size: 12px; color: var(--text3); margin-bottom: 12px; font-family: var(--font-sans); letter-spacing: var(--ls-caps); text-transform: uppercase; }
+.nd-item { font-size: 14px; color: var(--text2); margin-bottom: 6px; padding-left: 14px; position: relative; line-height: 1.5; }
+.nd-item::before { content: '·'; position: absolute; left: 0; color: var(--text3); font-weight: 700; }
+
+/* EMPLOYEE NETWORK */
+.net-ref { font-size: 13px; color: var(--text2); line-height: 1.65; margin-bottom: 18px; }
+.net-ref a { color: var(--green); font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(37,99,235,0.22); }
+.net-ref a:hover { border-bottom-color: var(--green); }
+.net-cent-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 18px; }
+@media (max-width: 900px) { .net-cent-grid { grid-template-columns: 1fr; } }
+.net-cent-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px;
+}
+.net-cent-title { font-family: var(--font-sans); font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.net-cent-meta { font-size: 10px; font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+.net-cent-desc { font-size: 12px; color: var(--text2); line-height: 1.55; }
+.tier-pill { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; font-family: var(--font-sans); }
+.tier-h { background: var(--red-dim); color: var(--red); }
+.tier-m { background: var(--amber-dim); color: var(--amber); }
+.tier-l { background: var(--success-dim); color: var(--success); }
+.mem-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+@media (max-width: 1100px) { .mem-kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+.mem-kpi {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 10px 12px;
+}
+.mem-kpi-l { font-size: 10px; color: var(--text3); letter-spacing: var(--ls-caps); text-transform: uppercase; font-family: var(--font-sans); font-weight: 700; margin-bottom: 4px; }
+.mem-kpi-v { font-family: var(--font-display); font-weight: 700; color: var(--text); font-size: 20px; line-height: 1; margin-bottom: 4px; }
+.mem-kpi-s { font-size: 11px; color: var(--text2); }
+.mem-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.mem-pill {
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600; color: var(--text2);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 5px 10px;
+}
+.mem-pill b { color: var(--text); }
+.mem-node { cursor: pointer; transition: transform .16s ease; }
+.mem-node:hover { transform: translateY(-1px); }
+.mem-node text { pointer-events: none; }
+.mem-mono { font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
+.twin-graph-section { margin-top: 22px; }
+
+/* KNOWLEDGE BASE */
+.twin-query-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.twin-input {
+  flex: 1; background: var(--bg4); border: 1px solid var(--border2);
+  border-radius: var(--r); padding: 14px 18px; color: var(--text);
+  font-family: var(--font-body); font-size: 15px; outline: none; line-height: 1.5;
+}
+.twin-input:focus { border-color: rgba(37,99,235,.45); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.twin-btn {
+  background: linear-gradient(165deg, var(--green), var(--green2)); color: var(--ink); border: none;
+  border-radius: var(--r); padding: 14px 22px; font-family: var(--font-sans);
+  font-size: 14px; font-weight: 700; cursor: pointer; transition: filter .15s ease; white-space: nowrap;
+  box-shadow: 0 2px 14px rgba(37,99,235,0.22);
+}
+.twin-btn:hover { filter: brightness(1.06); }
+.twin-suggested { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+.sug-chip {
+  font-size: 13px; color: var(--text2); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 999px;
+  padding: 7px 14px; cursor: pointer; transition: all .18s ease; font-family: var(--font-sans); font-weight: 500;
+}
+.sug-chip:hover { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+.twin-result {
+  background: var(--bg4); border: 1px solid var(--border2);
+  border-radius: var(--r-lg); padding: 22px 24px; margin-bottom: 16px; display: none;
+  box-shadow: var(--shadow-sm);
+}
+.twin-result.visible { display: block; animation: fadeIn .3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.tr-question { font-family: var(--font-sans); font-size: 12px; font-weight: 700; color: var(--text3); letter-spacing: var(--ls-caps); text-transform: uppercase; margin-bottom: 10px; }
+.tr-answer { font-size: 16px; color: var(--text); line-height: 1.65; margin-bottom: 16px; }
+.tr-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.confidence-bar { display: flex; align-items: center; gap: 8px; }
+.conf-label { font-family: var(--font-sans); font-size: 11px; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; }
+.conf-dots { display: flex; gap: 4px; }
+.conf-dot { width: 9px; height: 9px; border-radius: 3px; }
+.conf-filled { background: var(--success); }
+.conf-empty { background: var(--surface2); }
+.tr-source {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text3); background: var(--surface);
+  padding: 4px 10px; border-radius: var(--r-sm); border: 1px solid var(--border);
+}
+.tr-structured { display: flex; flex-direction: column; gap: 18px; margin-bottom: 18px; }
+.tr-section { border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; background: var(--surface); }
+.tr-section-title {
+  font-family: var(--font-sans); font-size: 11px; font-weight: 700; color: var(--text3);
+  letter-spacing: var(--ls-caps); text-transform: uppercase; margin-bottom: 10px;
+}
+.tr-summary { font-size: 15px; color: var(--text); line-height: 1.6; font-weight: 600; }
+.tr-bullets { margin: 0; padding-left: 18px; color: var(--text2); font-size: 14px; line-height: 1.65; }
+.tr-bullets li { margin-bottom: 8px; }
+.tr-bullets li:last-child { margin-bottom: 0; }
+.tr-context { font-size: 14px; color: var(--text2); line-height: 1.65; margin: 0; }
+.tr-rel-grid { display: flex; flex-direction: column; gap: 10px; }
+.tr-rel-link {
+  display: flex; align-items: flex-start; gap: 12px; text-decoration: none; color: inherit;
+  padding: 12px 14px; border-radius: var(--r); border: 1px solid var(--border2);
+  background: var(--bg4); transition: border-color .15s ease, background .15s ease;
+}
+.tr-rel-link:hover { border-color: rgba(37,99,235,.35); background: var(--surface); }
+.tr-rel-ico {
+  flex-shrink: 0; width: 36px; height: 36px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-sans); font-size: 10px; font-weight: 800; letter-spacing: 0.04em;
+}
+.tr-rel-ico.video { background: rgba(37,99,235,.15); color: var(--green); }
+.tr-rel-ico.artifact { background: rgba(16,185,129,.12); color: var(--green); }
+.tr-rel-ico.project { background: rgba(245,158,11,.14); color: var(--amber); }
+.tr-rel-text { min-width: 0; }
+.tr-rel-title { font-family: var(--font-sans); font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.35; }
+.tr-rel-sub { font-size: 12px; color: var(--text3); margin-top: 3px; }
+.tr-match-note {
+  font-size: 12px; color: var(--amber); font-family: var(--font-sans); font-weight: 600;
+  margin-bottom: 10px; padding: 8px 12px; background: var(--amber-dim); border-radius: var(--r-sm);
+  border: 1px solid rgba(245,158,11,.2);
+}
+
+/* RISK DASHBOARD */
+.spof-card {
+  background: var(--red-dim); border: 1px solid rgba(248,113,113,.2);
+  border-radius: var(--r-lg); padding: 14px 16px; margin-bottom: 8px;
+}
+.spof-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.spof-name { font-family: var(--font-sans); font-size: 14px; font-weight: 700; color: var(--red); letter-spacing: -0.01em; }
+.spof-domain { font-size: 13px; color: var(--text2); line-height: 1.4; }
+.spof-risk { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.spof-tag { font-size: 12px; color: var(--text2); background: var(--surface); padding: 3px 10px; border-radius: 999px; font-family: var(--font-sans); font-weight: 500; border: 1px solid var(--border); }
+
+.coverage-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.cov-card { background: var(--bg4); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; }
+.cov-domain { font-family: var(--font-sans); font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.cov-bar-wrap { background: var(--surface); border-radius: 999px; height: 7px; margin-bottom: 6px; overflow: hidden; border: 1px solid var(--border); }
+.cov-bar { height: 100%; border-radius: 999px; }
+.cov-pct { font-family: var(--font-mono); font-size: 11px; color: var(--text3); font-weight: 500; }
+
+/* OFFBOARDING */
+.ob-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.ob-row:last-child { border-bottom: none; }
+.ob-status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.status-pending { background: var(--amber); box-shadow: 0 0 6px rgba(251,191,36,.5); }
+.status-scheduled { background: var(--blue); }
+.status-done { background: var(--success); }
+.status-overdue { background: var(--red); box-shadow: 0 0 6px rgba(248,113,113,.5); }
+.ob-name { font-family: var(--font-sans); font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+.ob-detail { font-size: 13px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+.ob-date { font-family: var(--font-mono); font-size: 12px; color: var(--text3); margin-left: auto; font-weight: 500; }
+.ob-action {
+  font-family: var(--font-sans); font-size: 12px; font-weight: 700;
+  padding: 7px 14px; border-radius: var(--r-sm); border: 1px solid var(--border2);
+  background: transparent; color: var(--text2); cursor: pointer; transition: all .18s ease; white-space: nowrap;
+}
+.ob-action:hover { background: var(--surface); color: var(--text); }
+.ob-action.start { background: var(--green-dim); color: var(--green); border-color: rgba(37,99,235,.22); }
+.ob-action.start:hover { background: var(--green); color: var(--ink); }
+
+/* SECTION DIVIDER */
+.section-div { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.section-div-title { font-family: var(--font-sans); font-size: 12px; font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--text3); white-space: nowrap; }
+.section-div-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border2), transparent); }
+
+/* TABLE */
+.data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.data-table th { font-family: var(--font-sans); font-size: 11px; font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--text3); padding: 12px 14px; border-bottom: 1px solid var(--border2); text-align: left; }
+.data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: middle; line-height: 1.45; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(37,99,235,0.04); }
+
+/* VIDEO CONTROLS */
+.vc-btn {
+  width: 40px; height: 40px; border-radius: 50%; aspect-ratio: 1;
+  background: var(--surface); border: 1px solid var(--border2);
+  color: var(--text2); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .15s; flex-shrink: 0;
+}
+.vc-btn:hover { background: var(--surface2); color: var(--text); }
+.vc-btn.active-green { background: rgba(37,99,235,0.1); border-color: rgba(37,99,235,0.35); color: var(--green); }
+.vc-btn.muted { background: var(--red-dim); border-color: rgba(248,113,113,0.3); color: var(--red); }
+
+/* MODE TABS */
+.mode-tab {
+  font-family: var(--font-sans); font-size: 12px; font-weight: 600;
+  padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border2);
+  background: var(--surface); color: var(--text3); cursor: pointer; transition: all .18s ease;
+}
+.mode-tab.active { background: var(--green-dim); color: var(--green); border-color: rgba(37,99,235,0.22); }
+
+/* WAVEFORM BARS */
+.waveBar {
+  width: 3px; border-radius: 2px;
+  background: rgba(37,99,235,0.45);
+  transition: height .1s ease; min-height: 2px;
+}
+
+/* MIC ORB PULSE RINGS */
+.mic-pulse-ring {
+  position: absolute; border-radius: 50%;
+  border: 1.5px solid rgba(37,99,235,0.25);
+  animation: micPulse 2s ease-out infinite;
+  pointer-events: none;
+}
+#pr1 { width: 108px; height: 108px; animation-delay: 0s; }
+#pr2 { width: 132px; height: 132px; animation-delay: .5s; }
+#pr3 { width: 158px; height: 158px; animation-delay: 1s; }
+@keyframes micPulse {
+  0% { opacity: .6; transform: scale(.92); }
+  100% { opacity: 0; transform: scale(1.05); }
+}
+
+/* VERA WAVES */
+.vera-wave-ring {
+  position: absolute; border-radius: 50%;
+  border: 1.5px solid rgba(37,99,235,0.2);
+  animation: veraWave 1.8s ease-out infinite;
+  pointer-events: none; width: 80px; height: 80px;
+}
+#wave1 { animation-delay: 0s; }
+#wave2 { animation-delay: .45s; }
+#wave3 { animation-delay: .9s; }
+@keyframes veraWave {
+  0% { opacity: .7; transform: scale(.7); }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+
+@keyframes recPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); background-clip: padding-box; }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.modal-overlay.visible { display: flex; }
+.modal-box { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 28px 30px; width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto; animation: fadeIn .22s ease; box-shadow: 0 24px 64px rgba(15,23,42,0.12); }
+.modal-title { font-family: var(--font-sans); font-size: 19px; font-weight: 700; color: var(--text); margin-bottom: 6px; letter-spacing: -0.02em; }
+.modal-sub { font-size: 14px; color: var(--text2); margin-bottom: 22px; line-height: 1.5; }
+.modal-close { float: right; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-sm); width: 32px; height: 32px; color: var(--text3); cursor: pointer; font-size: 18px; line-height: 1; margin-top: -4px; display: flex; align-items: center; justify-content: center; transition: color .15s, background .15s; }
+.modal-close:hover { color: var(--text); background: var(--surface2); }
+.form-row { margin-bottom: 16px; }
+.form-label { font-family: var(--font-sans); font-size: 11px; font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--text3); margin-bottom: 8px; display: block; }
+.form-input { width: 100%; background: var(--bg4); border: 1px solid var(--border2); border-radius: var(--r); padding: 11px 14px; color: var(--text); font-family: var(--font-body); font-size: 15px; outline: none; line-height: 1.45; }
+.form-input:focus { border-color: rgba(37,99,235,.45); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.form-select { width: 100%; background: var(--bg4); border: 1px solid var(--border2); border-radius: var(--r); padding: 11px 14px; color: var(--text); font-family: var(--font-sans); font-size: 14px; outline: none; cursor: pointer; }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; flex-wrap: wrap; }
+
+/* NOTIFICATION */
+.toast { position: fixed; bottom: 28px; right: 28px; background: var(--bg3); border: 1px solid rgba(37,99,235,0.2); border-radius: var(--r-lg); padding: 14px 20px; z-index: 200; display: none; animation: slideUp .25s ease; box-shadow: var(--shadow-card); }
+.toast.visible { display: flex; align-items: center; gap: 12px; }
+@keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+.toast-icon { color: var(--green); font-size: 18px; }
+.toast-text { font-family: var(--font-sans); font-size: 14px; font-weight: 600; color: var(--text); }
+
+/* INTEGRATIONS — compact accordion list */
+.int-hero {
+  background: linear-gradient(145deg, var(--bg4) 0%, var(--bg3) 100%);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.int-hero-title {
+  font-family: var(--font-sans); font-size: 17px; font-weight: 800;
+  color: var(--text); letter-spacing: -0.02em; margin-bottom: 8px; line-height: var(--lh-tight);
+}
+.int-hero-title span { color: var(--green); }
+.int-hero p { font-size: 14px; color: var(--text2); line-height: 1.6; max-width: 42rem; }
+.int-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+details.int-acc {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .2s ease;
+}
+details.int-acc[open] { border-color: rgba(37,99,235,0.18); }
+details.int-acc summary {
+  list-style: none; cursor: pointer;
+  display: grid;
+  grid-template-columns: 44px 1fr auto 20px;
+  align-items: center; gap: 12px 14px;
+  padding: 10px 14px;
+  transition: background .18s ease;
+}
+details.int-acc summary::-webkit-details-marker { display: none; }
+details.int-acc summary::marker { content: ''; }
+details.int-acc summary:hover { background: rgba(15,23,42,0.03); }
+details.int-acc[open] summary { border-bottom: 1px solid var(--border); }
+.int-logo {
+  width: 40px; height: 40px; border-radius: var(--r-sm); aspect-ratio: 1;
+  background: #fff; border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+}
+.int-logo-svg { width: 26px; height: 26px; display: block; flex-shrink: 0; }
+.int-acc-titles { min-width: 0; }
+.int-brand {
+  font-family: var(--font-sans); font-size: 14px; font-weight: 700; color: var(--text);
+  line-height: 1.3; letter-spacing: -0.01em;
+}
+.int-teaser {
+  display: block; font-size: 13px; color: var(--text3); margin-top: 3px; line-height: 1.4;
+}
+details.int-acc .tag { flex-shrink: 0; }
+.int-acc-chev {
+  font-size: 10px; color: var(--text3); transition: transform .2s ease;
+  line-height: 1; user-select: none;
+}
+details.int-acc[open] .int-acc-chev { transform: rotate(180deg); color: var(--green); }
+.int-acc-body { padding: 16px 18px 18px 62px; }
+.int-desc { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
+.int-sync-label {
+  font-family: var(--font-sans); font-size: 10px; font-weight: 700;
+  letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--text3); margin-bottom: 8px;
+}
+.int-sync {
+  list-style: none; margin: 0 0 16px; padding: 0;
+  font-size: 13px; color: var(--text2); line-height: 1.55;
+}
+.int-sync li { padding-left: 14px; position: relative; margin-bottom: 4px; }
+.int-sync li::before {
+  content: ''; position: absolute; left: 0; top: 8px; width: 5px; height: 5px;
+  border-radius: 50%; background: var(--green); opacity: .85;
+}
+.int-steps {
+  list-style: none; margin: 0; padding: 0; counter-reset: intstep;
+  border-top: 1px solid var(--border); padding-top: 14px;
+}
+.int-steps-label {
+  font-family: var(--font-sans); font-size: 10px; font-weight: 700;
+  letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--text3); margin-bottom: 10px;
+}
+.int-steps li {
+  counter-increment: intstep;
+  position: relative; padding-left: 32px; margin-bottom: 12px;
+  font-size: 13px; color: var(--text2); line-height: 1.55;
+}
+.int-steps li:last-child { margin-bottom: 0; }
+.int-steps li::before {
+  content: counter(intstep);
+  position: absolute; left: 0; top: 0;
+  width: 22px; height: 22px; border-radius: 6px;
+  background: var(--green-dim); color: var(--green);
+  font-family: var(--font-sans); font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.int-footnote {
+  font-size: 13px; color: var(--text2); padding: 16px 18px;
+  background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r-lg);
+  line-height: 1.6;
+}
+@media (max-width: 560px) {
+  details.int-acc summary { grid-template-columns: 36px 1fr 18px; }
+  details.int-acc summary .tag { grid-column: 2; grid-row: 2; justify-self: start; margin-top: 2px; }
+  details.int-acc summary .int-acc-chev { grid-column: 3; grid-row: 1; align-self: start; padding-top: 4px; }
+  .int-acc-body { padding-left: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">ExpertMind</div>
+    <div class="logo-sub">Org Memory Platform</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active" onclick="showScreen('dashboard')">
+      <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="showScreen('offboarding')">
+      <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="4" r="2.5"/><path d="M2 13c0-3 2.5-5 6-5s6 2 6 5"/><path d="M12 9l2 2-2 2"/></svg>
+      Knowledge Capture
+      <span class="nav-badge">3</span>
+    </div>
+    <div class="nav-section-label">Knowledge</div>
+    <div class="nav-item" onclick="showScreen('graph')">
+      <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2"/><circle cx="2" cy="4" r="1.5"/><circle cx="14" cy="4" r="1.5"/><circle cx="2" cy="12" r="1.5"/><circle cx="14" cy="12" r="1.5"/><path d="M3.5 4.8L6.2 6.8M12.5 4.8L9.8 6.8M3.5 11.2L6.2 9.2M12.5 11.2L9.8 9.2"/></svg>
+      Employee Network
+    </div>
+    <div class="nav-item" onclick="showScreen('twin')">
+      <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h12v7H2z" rx="1"/><path d="M5 13h6M8 10v3"/><path d="M5 6h1M7 6h4M5 8h6"/></svg>
+      Knowledge Base
+    </div>
+    <div class="nav-section-label">Analytics</div>
+    <div class="nav-item" onclick="showScreen('risk')">
+      <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l1.5 4h4l-3.5 2.5 1.5 4L8 10l-3.5 2.5 1.5-4L2.5 6h4z"/></svg>
+      Risk Dashboard
+      <span class="nav-badge amber">2</span>
+    </div>
+    <div class="nav-item" onclick="showScreen('people')">
+      <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="4.5" r="2"/><circle cx="10.5" cy="4.5" r="2"/><path d="M1 13c0-2.5 2-4 4.5-4"/><path d="M15 13c0-2.5-2-4-4.5-4"/><circle cx="8" cy="8" r="2.5"/><path d="M4 15c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5"/></svg>
+      People
+    </div>
+    <div class="nav-section-label">Connect</div>
+    <div class="nav-item" onclick="showScreen('integrations')">
+      <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v3M8 11v3M2 8h3M11 8h3"/><circle cx="8" cy="8" r="2"/><path d="M4.5 4.5l2 2M9.5 9.5l2 2M11.5 4.5l-2 2M6.5 9.5l-2 2"/></svg>
+      Integrations
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">AC</div>
+    <div class="user-info">
+      <div class="name">Alex Chen</div>
+      <div class="role">VP Engineering · B2B SaaS</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Dashboard</div>
+    <div class="topbar-right">
+      <button class="tb-btn" onclick="showModal('addDeparture')">+ Add Departure</button>
+      <button class="tb-btn primary" onclick="showScreen('offboarding')">Open Knowledge Capture</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- ═══════════════════ DASHBOARD ═══════════════════ -->
+    <div id="screen-dashboard" class="screen active">
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">Knowledge Risk Overview</div>
+          <div class="metric-val amber">67<span style="font-size:16px">/100</span></div>
+          <div style="display:flex;gap:8px;align-items:center;margin:6px 0 8px">
+            <span class="tag tag-red">2 SPOFs</span>
+            <span class="tag tag-green">↓ 8% vs last period</span>
+          </div>
+          <div class="metric-sub">Knowledge Risk Index combines SPOFs, departure exposure, and undocumented critical workflows.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Departure Risk &amp; Actions</div>
+          <div class="metric-val red">11</div>
+          <div class="metric-sub" style="margin-bottom:10px">Total departures at risk in next 90 days</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+            <span class="tag tag-red">High: 4 (0% captured)</span>
+            <span class="tag tag-amber">Medium: 5</span>
+            <span class="tag tag-green">Low: 2</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="tb-btn" onclick="showModal('newSession')">Schedule</button>
+            <button class="tb-btn primary" onclick="showScreen('vera')">Start session</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Knowledge System Health</div>
+          <div class="prog-row"><span class="prog-label" style="width:180px">Knowledge capture rate</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:74%"></div></div><span class="prog-val">74%</span></div>
+          <div class="prog-row"><span class="prog-label" style="width:180px">Expert validation rate</span><div class="prog-wrap"><div class="prog-bar pb-green" style="width:81%"></div></div><span class="prog-val">81%</span></div>
+          <div class="prog-row"><span class="prog-label" style="width:180px">Twin answer accuracy</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:79%"></div></div><span class="prog-val">79%</span></div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text3)">Accuracy from audited responses on critical queries.</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Knowledge Risk</div>
+          <div class="prog-row"><span class="prog-label" style="width:210px">Single points of failure (SPOFs)</span><div class="prog-wrap"><div class="prog-bar pb-red" style="width:72%"></div></div><span class="prog-val" style="color:var(--red)">2</span></div>
+          <div class="prog-row"><span class="prog-label" style="width:210px">At-risk knowledge (30/60/90 days)</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:66%"></div></div><span class="prog-val">11/19/26</span></div>
+          <div class="prog-row"><span class="prog-label" style="width:210px">Critical workflow coverage</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:58%"></div></div><span class="prog-val">58%</span></div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text3)">Workflow-level risk supersedes domain-only reporting.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Departure Readiness</div>
+          <table class="data-table">
+            <thead><tr><th>Employee</th><th>Readiness</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><span style="color:var(--text);font-family:'Syne',sans-serif;font-weight:600">K. Tan</span></td><td><span style="color:var(--red)">18%</span></td><td><span class="tag tag-red">High risk</span></td></tr>
+              <tr><td><span style="color:var(--text);font-family:'Syne',sans-serif;font-weight:600">J. Rivera</span></td><td><span style="color:var(--amber)">42%</span></td><td><span class="tag tag-amber">Medium</span></td></tr>
+              <tr><td><span style="color:var(--text);font-family:'Syne',sans-serif;font-weight:600">L. Park</span></td><td><span style="color:var(--amber)">49%</span></td><td><span class="tag tag-amber">Medium</span></td></tr>
+              <tr><td><span style="color:var(--text);font-family:'Syne',sans-serif;font-weight:600">A. Dubois</span></td><td><span style="color:var(--success)">83%</span></td><td><span class="tag tag-green">Low risk</span></td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:10px;font-size:12px;color:var(--text2)">Zero knowledge-loss departures: <strong style="color:var(--text)">61%</strong> · Avg capture lead time: <strong style="color:var(--text)">17 days</strong></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Capture Effectiveness</div>
+          <div class="prog-row"><span class="prog-label" style="width:210px">Knowledge capture rate</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:74%"></div></div><span class="prog-val">74%</span></div>
+          <div class="prog-row"><span class="prog-label" style="width:210px">Avg depth per expert</span><div class="prog-wrap"><div class="prog-bar pb-green" style="width:77%"></div></div><span class="prog-val">7.7/10</span></div>
+          <div class="prog-row"><span class="prog-label" style="width:210px">Critical-role capture coverage</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:63%"></div></div><span class="prog-val">63%</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Business Impact</div>
+          <div class="prog-row"><span class="prog-label" style="width:210px">Knowledge loss prevented</span><div class="prog-wrap"><div class="prog-bar pb-green" style="width:82%"></div></div><span class="prog-val">$1.34M</span></div>
+          <div class="prog-row"><span class="prog-label" style="width:210px">Onboarding acceleration</span><div class="prog-wrap"><div class="prog-bar pb-green" style="width:68%"></div></div><span class="prog-val">12 days</span></div>
+          <div class="prog-row"><span class="prog-label" style="width:210px">Query deflection rate</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:71%"></div></div><span class="prog-val">71%</span></div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text3)">Estimated with blended rework + incident avoidance model.</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Departure Risk &amp; Actions (Priority Queue)</div>
+          <div class="alert-row" onclick="showScreen('vera')">
+            <div class="alert-dot ad-red"></div>
+            <div class="alert-content">
+              <div class="alert-name">K. Tan — Staff SWE (serving reliability)</div>
+              <div class="alert-detail">0% captured · Last day Jan 31 · Canary rollback rules are single-owner.</div>
+            </div>
+            <button class="alert-action" onclick="event.stopPropagation();showModal('newSession')">Schedule</button>
+          </div>
+          <div class="alert-row" onclick="showScreen('offboarding')">
+            <div class="alert-dot ad-red"></div>
+            <div class="alert-content">
+              <div class="alert-name">J. Rivera — Principal PM (experimentation)</div>
+              <div class="alert-detail">0% captured · Last day Feb 15 · PRD and guardrail policy undocumented.</div>
+            </div>
+            <button class="alert-action" onclick="event.stopPropagation();showScreen('vera')">Start session</button>
+          </div>
+          <div class="alert-row amber" onclick="showScreen('offboarding')">
+            <div class="alert-dot ad-amber"></div>
+            <div class="alert-content">
+              <div class="alert-name">L. Park — Research Scientist (agent evals)</div>
+              <div class="alert-detail">45 days to transfer · Coverage below threshold in release-policy workflows.</div>
+            </div>
+            <button class="alert-action amber" onclick="event.stopPropagation();showModal('newSession')">Schedule</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Knowledge Coverage by Domain (Risk + Trend)</div>
+          <div class="prog-row"><span class="prog-label">Experimentation &amp; DS</span><div class="prog-wrap"><div class="prog-bar pb-green" style="width:84%"></div></div><span class="prog-val">84%</span></div>
+          <div style="font-size:11px;color:var(--text3);margin:-6px 0 10px 162px">SPOFs: 0 · Trend: <span style="color:var(--success)">+4%</span></div>
+          <div class="prog-row"><span class="prog-label">Product &amp; roadmap</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:51%"></div></div><span class="prog-val">51%</span></div>
+          <div style="font-size:11px;color:var(--text3);margin:-6px 0 10px 162px">SPOFs: 1 · Trend: <span style="color:var(--amber)">-1%</span></div>
+          <div class="prog-row"><span class="prog-label">Data platform</span><div class="prog-wrap"><div class="prog-bar pb-red" style="width:28%"></div></div><span class="prog-val">28%</span></div>
+          <div style="font-size:11px;color:var(--text3);margin:-6px 0 10px 162px">SPOFs: 1 · Trend: <span style="color:var(--red)">-6%</span></div>
+          <div class="prog-row"><span class="prog-label">Agent evals &amp; policy</span><div class="prog-wrap"><div class="prog-bar pb-red" style="width:19%"></div></div><span class="prog-val">19%</span></div>
+          <div style="font-size:11px;color:var(--text3);margin:-6px 0 0 162px">SPOFs: 1 · Trend: <span style="color:var(--red)">-9%</span></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Recent Sessions (Depth, Validation, Risk Reduction)</div>
+          <table class="data-table">
+            <thead><tr><th>Expert</th><th>Depth</th><th>Validation</th><th>Risk reduction</th></tr></thead>
+            <tbody>
+              <tr><td><span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text)">M. Okonkwo</span><br><span style="font-size:10px;color:var(--text3)">Experimentation</span></td><td>8.6 / 10</td><td><span style="color:var(--success)">92%</span></td><td><span style="color:var(--success)">-7.2</span></td></tr>
+              <tr><td><span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text)">S. Reeves</span><br><span style="font-size:10px;color:var(--text3)">Product process</span></td><td>7.9 / 10</td><td><span style="color:var(--success)">88%</span></td><td><span style="color:var(--success)">-5.1</span></td></tr>
+              <tr><td><span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text)">A. Dubois</span><br><span style="font-size:10px;color:var(--text3)">TPM / governance</span></td><td>6.8 / 10</td><td><span style="color:var(--amber)">71%</span></td><td><span style="color:var(--amber)">-2.2</span></td></tr>
+              <tr><td><span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text)">K. Tan</span><br><span style="font-size:10px;color:var(--text3)">Serving reliability</span></td><td>—</td><td><span style="color:var(--red)">0%</span></td><td><span style="color:var(--red)">0.0</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-title">Knowledge Base Activity (Executive Outcomes)</div>
+          <div class="prog-row"><span class="prog-label" style="width:190px">Deflection rate</span><div class="prog-wrap"><div class="prog-bar pb-green" style="width:71%"></div></div><span class="prog-val">71%</span></div>
+          <div class="prog-row"><span class="prog-label" style="width:190px">Answer quality score</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:79%"></div></div><span class="prog-val">7.9/10</span></div>
+          <div class="prog-row"><span class="prog-label" style="width:190px">Unanswered critical queries</span><div class="prog-wrap"><div class="prog-bar pb-red" style="width:26%"></div></div><span class="prog-val">13</span></div>
+          <table class="data-table" style="margin-top:10px">
+            <thead><tr><th>Critical queue</th><th>Open</th><th>SLA</th></tr></thead>
+            <tbody>
+              <tr><td>Agent eval release policy</td><td><span class="tag tag-red">6</span></td><td><span style="color:var(--red)">Breached</span></td></tr>
+              <tr><td>Canary rollback governance</td><td><span class="tag tag-amber">4</span></td><td><span style="color:var(--amber)">At risk</span></td></tr>
+              <tr><td>Data quality incident rubric</td><td><span class="tag tag-amber">3</span></td><td><span style="color:var(--amber)">At risk</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Top Organizational Risks</div>
+        <table class="data-table">
+          <thead><tr><th>Risk</th><th>Driver</th><th>Exposure</th><th>Impact</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text)">Serving rollback decisions are single-owner</span><br><span style="font-size:10px;color:var(--text3)">Owner: K. Tan · Workflow: Canary recovery</span></td><td><span class="tag tag-red">Single-owner</span></td><td>29 days</td><td><span style="color:var(--red)">$420k</span></td><td><button class="tb-btn" style="padding:6px 10px;font-size:11px" onclick="showScreen('vera')">Start session</button></td></tr>
+            <tr><td><span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text)">Experiment guardrail policy undocumented</span><br><span style="font-size:10px;color:var(--text3)">Owner: J. Rivera · Workflow: Product launch gating</span></td><td><span class="tag tag-red">Undocumented process</span></td><td>44 days</td><td><span style="color:var(--red)">$305k</span></td><td><button class="tb-btn" style="padding:6px 10px;font-size:11px" onclick="showModal('newSession')">Schedule</button></td></tr>
+            <tr><td><span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text)">Agent eval release gates below baseline</span><br><span style="font-size:10px;color:var(--text3)">Owner: L. Park · Workflow: Model ship review</span></td><td><span class="tag tag-amber">Upcoming departure</span></td><td>45 days</td><td><span style="color:var(--amber)">$260k</span></td><td><button class="tb-btn" style="padding:6px 10px;font-size:11px" onclick="showScreen('twin')">Open Twin graph</button></td></tr>
+            <tr><td><span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text)">Data quality severity playbook stale</span><br><span style="font-size:10px;color:var(--text3)">Owner: Data platform · Workflow: Incident response</span></td><td><span class="tag tag-amber">Undocumented process</span></td><td>21 days</td><td><span style="color:var(--amber)">$180k</span></td><td><button class="tb-btn" style="padding:6px 10px;font-size:11px" onclick="showScreen('vera')">Assign capture</button></td></tr>
+            <tr><td><span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text)">Cross-org launch dependency mapping incomplete</span><br><span style="font-size:10px;color:var(--text3)">Owner: A. Dubois · Workflow: QBR planning</span></td><td><span class="tag tag-amber">Single-owner</span></td><td>63 days</td><td><span style="color:var(--amber)">$120k</span></td><td><button class="tb-btn" style="padding:6px 10px;font-size:11px" onclick="showScreen('risk')">Review risk</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ DEPARTURES ═══════════════════ -->
+    <div id="screen-offboarding" class="screen">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Employee Intelligence Search</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="captureSearchInput" class="twin-input" style="flex:1;min-width:200px;padding:10px 14px;font-size:14px;border-radius:var(--r);border:1px solid var(--border2);background:var(--bg4)" placeholder="Search by name or ID (e.g. K. Tan, Employee_4, Employee_23)" onkeydown="if(event.key==='Enter') searchKnowledgeCaptureEmployee()"/>
+          <button class="tb-btn primary" style="padding:10px 20px;font-size:13px" onclick="searchKnowledgeCaptureEmployee()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px;margin-right:6px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search
+          </button>
+        </div>
+        <div id="captureSearchResult" style="margin-top:14px">
+          <div style="font-size:12px;color:var(--text3);padding:8px 0">Search to view designation, centrality, capture %, connected departments, risk score, owned topics, and repository link.</div>
+        </div>
+      </div>
+      <div class="grid-4" style="margin-bottom:24px">
+        <div class="card"><div class="card-title">Total Tracked</div><div class="metric-val">7</div><div class="metric-sub">Active offboardings</div></div>
+        <div class="card"><div class="card-title">Overdue</div><div class="metric-val red">1</div><div class="metric-sub">Session not started</div></div>
+        <div class="card"><div class="card-title">In Progress</div><div class="metric-val amber">3</div><div class="metric-sub">Sessions scheduled</div></div>
+        <div class="card"><div class="card-title">Completed</div><div class="metric-val green">3</div><div class="metric-sub">Knowledge captured</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:0">All Departure Cases</div>
+        <div style="margin-top:14px">
+          <div class="ob-row">
+            <div class="ob-status-dot status-overdue"></div>
+            <div class="person-av av-red" style="width:32px;height:32px">KT</div>
+            <div>
+              <div class="ob-name">K. Tan</div>
+              <div class="ob-detail">Staff SWE · Serving &amp; canary rollbacks · 9 yrs</div>
+            </div>
+            <div class="ob-date">Ret. Jan 31, 2026</div>
+            <span class="tag tag-red" style="margin-left:8px">Overdue</span>
+            <button class="ob-action start" onclick="showScreen('vera')">Start Session</button>
+          </div>
+          <div class="ob-row">
+            <div class="ob-status-dot status-pending"></div>
+            <div class="person-av av-amber" style="width:32px;height:32px">JR</div>
+            <div>
+              <div class="ob-name">J. Rivera</div>
+              <div class="ob-detail">Principal PM · Ads metrics &amp; experimentation · 12 yrs</div>
+            </div>
+            <div class="ob-date">Last day Feb 15</div>
+            <span class="tag tag-amber" style="margin-left:8px">Pending</span>
+            <button class="ob-action start" onclick="showScreen('vera')">Start Session</button>
+          </div>
+          <div class="ob-row">
+            <div class="ob-status-dot status-scheduled"></div>
+            <div class="person-av av-blue" style="width:32px;height:32px">LP</div>
+            <div>
+              <div class="ob-name">L. Park</div>
+              <div class="ob-detail">Research Scientist · Agent evals &amp; model cards</div>
+            </div>
+            <div class="ob-date">Transfer Feb 28</div>
+            <span class="tag tag-blue" style="margin-left:8px">Session Feb 12</span>
+            <button class="ob-action">View Schedule</button>
+          </div>
+          <div class="ob-row">
+            <div class="ob-status-dot status-done"></div>
+            <div class="person-av av-green" style="width:32px;height:32px">MO</div>
+            <div>
+              <div class="ob-name">M. Okonkwo</div>
+              <div class="ob-detail">Staff Data Scientist · Experimentation platform</div>
+            </div>
+            <div class="ob-date">Left Jan 10</div>
+            <span class="tag tag-green" style="margin-left:8px">8 Records</span>
+            <button class="ob-action" onclick="showScreen('twin')">View Knowledge</button>
+          </div>
+          <div class="ob-row">
+            <div class="ob-status-dot status-done"></div>
+            <div class="person-av av-green" style="width:32px;height:32px">SR</div>
+            <div>
+              <div class="ob-name">S. Reeves</div>
+              <div class="ob-detail">Sr PM · Growth &amp; subscriptions</div>
+            </div>
+            <div class="ob-date">Left Dec 2025</div>
+            <span class="tag tag-green" style="margin-left:8px">5 Records</span>
+            <button class="ob-action" onclick="showScreen('twin')">View Knowledge</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ VERA SESSION ═══════════════════ -->
+    <div id="screen-vera" class="screen">
+
+      <!-- Session header bar -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--text)">K. Tan — Serving &amp; safe rollout</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;font-family:'IBM Plex Mono',monospace">Session 1 of 2 · Domain: Canary &amp; rollback · <span id="sessionTimer" style="color:var(--green)">00:18:43</span> elapsed</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div id="recDot" style="width:8px;height:8px;border-radius:50%;background:var(--red);animation:recPulse 1.5s infinite"></div>
+          <span style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--red);letter-spacing:.08em">RECORDING</span>
+          <div style="width:1px;height:16px;background:var(--border);margin:0 4px"></div>
+          <button class="tb-btn" onclick="endSession()" style="font-size:11px;padding:5px 12px">End Session</button>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div style="margin-bottom:20px">
+        <div class="vera-progress-bar" style="margin-bottom:6px"><div class="vera-progress-fill" id="veraProgress" style="width:35%"></div></div>
+        <div class="vera-phase-labels"><span>Context</span><span>Incidents</span><span>Runbooks</span><span>Decision rules</span><span>Complete</span></div>
+      </div>
+
+      <!-- Main 3-column layout -->
+      <div style="display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:14px;align-items:start">
+
+        <!-- LEFT: Video feeds -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+
+          <!-- Vera avatar video -->
+          <div style="position:relative;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;aspect-ratio:4/3">
+            <!-- Animated gradient background simulating a video feed -->
+            <div id="veraBg" style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,#e0e7ff 0%,#f8fafc 75%);transition:background .5s"></div>
+            <!-- Sound-wave circles that animate when Vera speaks -->
+            <div id="veraWaves" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">
+              <div class="vera-wave-ring" id="wave1"></div>
+              <div class="vera-wave-ring" id="wave2"></div>
+              <div class="vera-wave-ring" id="wave3"></div>
+            </div>
+            <!-- Vera avatar -->
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+              <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#3b82f6);border:2px solid rgba(37,99,235,0.35);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 8px 24px rgba(37,99,235,0.25)">
+                <span style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff">V</span>
+                <!-- Speaking indicator ring -->
+                <div id="veraRing" style="position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(37,99,235,0);transition:border-color .2s"></div>
+              </div>
+              <div style="text-align:center">
+                <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text)">Vera</div>
+                <div style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace">AI Interviewer</div>
+              </div>
+            </div>
+            <!-- Status pill -->
+            <div id="veraStatus" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.95);border:1px solid var(--border2);border-radius:20px;padding:4px 12px;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--green);white-space:nowrap;box-shadow:0 2px 8px rgba(15,23,42,0.06)">Listening…</div>
+            <!-- Corner label -->
+            <div style="position:absolute;top:10px;left:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.08em">VERA · AI</div>
+          </div>
+
+          <!-- Expert live video -->
+          <div style="position:relative;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;aspect-ratio:4/3">
+            <!-- Simulated video feed texture -->
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,#f1f5f9 0%,#e2e8f0 100%)"></div>
+            <!-- Simulated person silhouette -->
+            <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 200 150" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <radialGradient id="personGrad" cx="50%" cy="40%" r="50%">
+                  <stop offset="0%" stop-color="#cbd5e1"/>
+                  <stop offset="100%" stop-color="#94a3b8"/>
+                </radialGradient>
+              </defs>
+              <rect x="0" y="80" width="200" height="70" fill="#e2e8f0" rx="0"/>
+              <rect x="20" y="60" width="160" height="60" fill="#f1f5f9" rx="4" opacity=".9"/>
+              <ellipse cx="100" cy="55" rx="22" ry="26" fill="url(#personGrad)"/>
+              <path d="M55 150 Q60 95 78 85 Q90 80 100 82 Q110 80 122 85 Q140 95 145 150Z" fill="url(#personGrad)"/>
+              <ellipse cx="94" cy="50" rx="3" ry="4" fill="#64748b" opacity=".5"/>
+              <ellipse cx="106" cy="50" rx="3" ry="4" fill="#64748b" opacity=".5"/>
+              <path d="M94 62 Q100 67 106 62" stroke="#64748b" stroke-width="1.2" fill="none" opacity=".45"/>
+            </svg>
+            <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(15,23,42,0.02) 2px,rgba(15,23,42,0.02) 4px);pointer-events:none"></div>
+            <!-- Live mic waveform bar at bottom -->
+            <div style="position:absolute;bottom:0;left:0;right:0;height:32px;background:linear-gradient(transparent,rgba(255,255,255,0.85));display:flex;align-items:flex-end;justify-content:center;gap:2px;padding-bottom:6px" id="expertWaveform">
+              <div class="waveBar" style="height:4px"></div><div class="waveBar" style="height:6px"></div><div class="waveBar" style="height:3px"></div><div class="waveBar" style="height:8px"></div><div class="waveBar" style="height:4px"></div><div class="waveBar" style="height:12px"></div><div class="waveBar" style="height:6px"></div><div class="waveBar" style="height:9px"></div><div class="waveBar" style="height:4px"></div><div class="waveBar" style="height:7px"></div><div class="waveBar" style="height:3px"></div><div class="waveBar" style="height:5px"></div><div class="waveBar" style="height:10px"></div><div class="waveBar" style="height:4px"></div><div class="waveBar" style="height:6px"></div>
+            </div>
+            <!-- Live indicator -->
+            <div style="position:absolute;top:10px;right:10px;display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.95);border:1px solid var(--border);padding:4px 10px;border-radius:10px;box-shadow:0 2px 8px rgba(15,23,42,0.06)">
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--red);animation:recPulse 1.5s infinite"></div>
+              <span style="font-family:'Syne',sans-serif;font-size:9px;font-weight:700;color:var(--text);letter-spacing:.06em">LIVE</span>
+            </div>
+            <div style="position:absolute;bottom:10px;left:10px;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--text);background:rgba(255,255,255,0.95);border:1px solid var(--border);padding:4px 10px;border-radius:6px">K. Tan</div>
+            <div style="position:absolute;top:10px;left:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.08em">CAMERA · ON</div>
+          </div>
+
+          <!-- Video controls row -->
+          <div style="display:flex;gap:8px;justify-content:center">
+            <button class="vc-btn" id="btnMic" onclick="toggleCtrl('mic')" title="Mute/Unmute">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="1" width="6" height="9" rx="3"/><path d="M2 8c0 3.3 2.7 6 6 6s6-2.7 6-6M8 14v2"/></svg>
+            </button>
+            <button class="vc-btn" id="btnCam" onclick="toggleCtrl('cam')" title="Camera On/Off">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4h9a1 1 0 011 1v6a1 1 0 01-1 1H1a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M11 6.5l4-2v7l-4-2"/></svg>
+            </button>
+            <button class="vc-btn active-green" id="btnRecord" onclick="toggleCtrl('record')" title="Pause Recording">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="5"/></svg>
+            </button>
+            <button class="vc-btn" id="btnScreen" onclick="toggleCtrl('screen')" title="Share Screen / Walkthrough">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="10" rx="1"/><path d="M5 14h6M8 12v2"/></svg>
+            </button>
+            <button class="vc-btn" onclick="toggleCtrl('transcript')" title="Toggle live transcript">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
+            </button>
+          </div>
+
+          <!-- Live transcript panel -->
+          <div id="transcriptPanel" style="background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;display:none;max-height:100px;overflow-y:auto">
+            <div style="font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Live Transcript</div>
+            <div id="liveTranscript" style="font-size:11px;color:var(--text2);line-height:1.6">…we hold 5% until three consecutive windows pass SLI — if error rate ticks up but latency is flat we still roll back. <span style="color:var(--text3)">|</span></div>
+          </div>
+        </div>
+
+        <!-- CENTRE: Chat + input -->
+        <div style="display:flex;flex-direction:column;gap:0;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;min-height:580px">
+
+          <!-- Chat header -->
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+            <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Conversation</div>
+            <div style="margin-left:auto;display:flex;gap:6px">
+              <button class="mode-tab active" id="tab-text" onclick="switchMode('text')">Text</button>
+              <button class="mode-tab" id="tab-voice" onclick="switchMode('voice')">Voice</button>
+            </div>
+          </div>
+
+          <!-- Text mode -->
+          <div id="mode-text" style="display:flex;flex-direction:column;flex:1">
+            <div class="vera-chat" id="veraChat" style="flex:1;overflow-y:auto;padding:16px;gap:14px;max-height:360px">
+              <div class="chat-msg">
+                <div class="chat-av vera">V</div>
+                <div class="chat-bubble vera">Hi K. Tan — thanks for doing this. I’m Vera; I’ll capture how your team actually ships so the next on-call isn’t guessing.<br><br>Start concrete: <strong>Walk me through the last time you rolled out at 5% canary. What did you watch first on the dashboard — errors, latency, or something else?</strong></div>
+              </div>
+              <div class="chat-msg user">
+                <div class="chat-av user">KT</div>
+                <div class="chat-bubble user">Last quarter, payment API change. We always pair error rate with p99 latency by region — but the thing that bit us was error budget burn rate, not the point-in-time graph. Flat latency masked a spike in 5xx on older mobile clients only visible when we sliced the canary cohort.</div>
+              </div>
+              <div class="chat-msg">
+                <div class="chat-av vera">V</div>
+                <div class="chat-bubble vera">Useful distinction. <strong>At what point do you call rollback — a fixed threshold, consecutive bad windows, or human judgment? Who owns the final call?</strong></div>
+              </div>
+              <div class="chat-msg user">
+                <div class="chat-av user">KT</div>
+                <div class="chat-bubble user">Automated rollback if SLI is red for three 5-minute windows, or immediately if checkout success rate drops more than 30 bp vs baseline. Anything in the grey zone goes to the serving on-call; if they’re unsure they page the TPM for that launch. We never widen to 25% while burn is accelerating.</div>
+              </div>
+              <div class="chat-msg">
+                <div class="chat-av vera">V</div>
+                <div class="chat-bubble vera">Got it. <strong>Is there a minimum bar for documentation before the next engineer can repeat this — runbook link, feature flag name, dashboard IDs?</strong></div>
+              </div>
+              <div class="chat-msg user" id="latestMsg" style="display:none">
+                <div class="chat-av user">KT</div>
+                <div class="chat-bubble user" id="latestBubble"></div>
+              </div>
+              <div class="chat-msg" id="veraTyping" style="display:none">
+                <div class="chat-av vera">V</div>
+                <div class="chat-bubble vera"><span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></div>
+              </div>
+            </div>
+            <!-- Text input -->
+            <div style="padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end">
+              <textarea class="vera-input" id="veraInput" rows="2" placeholder="Type your response…" style="flex:1"></textarea>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <button class="vera-send" onclick="sendVeraMsg()">Send →</button>
+                <button class="vc-btn" onclick="switchMode('voice')" title="Switch to voice" style="width:100%;justify-content:center">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="1" width="6" height="9" rx="3"/><path d="M2 8c0 3.3 2.7 6 6 6s6-2.7 6-6"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Voice mode -->
+          <div id="mode-voice" style="display:none;flex-direction:column;flex:1;align-items:center;justify-content:center;padding:24px;gap:20px">
+
+            <!-- Big mic orb -->
+            <div style="position:relative;display:flex;align-items:center;justify-content:center">
+              <!-- Pulse rings -->
+              <div class="mic-pulse-ring" id="pr1"></div>
+              <div class="mic-pulse-ring" id="pr2"></div>
+              <div class="mic-pulse-ring" id="pr3"></div>
+              <!-- Mic button -->
+              <button id="micOrb" onclick="toggleVoice()" style="width:88px;height:88px;border-radius:50%;background:var(--bg4);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;z-index:2;transition:all .2s">
+                <svg id="micIcon" width="32" height="32" viewBox="0 0 16 16" fill="none" stroke="var(--text2)" stroke-width="1.5"><rect x="5" y="1" width="6" height="9" rx="3"/><path d="M2 8c0 3.3 2.7 6 6 6s6-2.7 6-6M8 14v2"/></svg>
+              </button>
+            </div>
+
+            <div style="text-align:center">
+              <div id="voiceStateLabel" style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text2)">Tap to speak</div>
+              <div id="voiceSubLabel" style="font-size:11px;color:var(--text3);margin-top:4px">Vera is waiting for your response</div>
+            </div>
+
+            <!-- Waveform canvas -->
+            <canvas id="waveCanvas" width="280" height="48" style="border-radius:6px;opacity:.7"></canvas>
+
+            <!-- Last Vera question card -->
+            <div style="background:var(--bg4);border:1px solid rgba(37,99,235,0.15);border-radius:var(--r);padding:12px 14px;width:100%;max-width:320px">
+              <div style="font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px;display:flex;align-items:center;gap:6px">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="var(--green)"><circle cx="8" cy="8" r="8"/></svg>
+                Vera is asking
+              </div>
+              <div style="font-size:12px;color:var(--text);line-height:1.6" id="voiceQuestion">What has to be in the runbook so the next on-call can repeat this rollback decision without paging you?</div>
+            </div>
+
+            <!-- Voice transcript live -->
+            <div id="voiceTranscriptLive" style="background:var(--surface);border-radius:var(--r);padding:10px 14px;width:100%;max-width:320px;min-height:40px;font-size:12px;color:var(--text2);line-height:1.6;display:none"></div>
+
+            <!-- Controls below orb -->
+            <div style="display:flex;gap:12px;margin-top:4px">
+              <button onclick="switchMode('text')" style="font-family:'Syne',sans-serif;font-size:11px;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Switch to text</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Live analysis -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+
+          <!-- Entities extracted -->
+          <div class="card" style="padding:14px 16px">
+            <div class="card-title" style="margin-bottom:8px">Entities Extracted</div>
+            <div id="entityTags" style="display:flex;flex-wrap:wrap;gap:5px">
+              <span class="tag tag-blue">Canary 5%</span>
+              <span class="tag tag-blue">Payment API</span>
+              <span class="tag tag-green">Error budget burn</span>
+              <span class="tag tag-green">SLI / SLO</span>
+              <span class="tag tag-amber">p99 latency</span>
+              <span class="tag tag-amber">Cohort slice</span>
+              <span class="tag tag-green">Automated rollback</span>
+              <span class="tag tag-gray">3×5m windows</span>
+            </div>
+          </div>
+
+          <!-- Knowledge records forming -->
+          <div class="card" style="padding:14px 16px">
+            <div class="card-title" style="margin-bottom:8px">Records Forming</div>
+            <div style="background:var(--bg4);border:1px solid rgba(37,99,235,0.15);border-radius:var(--r);padding:10px 12px;margin-bottom:8px">
+              <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px">Incident pattern #1</div>
+              <div style="font-size:11px;color:var(--text2);line-height:1.5">Flat aggregate latency + rising 5xx on sliced canary cohort — check client version and region before blaming infra.</div>
+            </div>
+            <div style="background:var(--bg4);border:1px solid rgba(251,191,36,0.2);border-radius:var(--r);padding:10px 12px">
+              <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--amber);margin-bottom:4px">Decision rule #1</div>
+              <div style="font-size:11px;color:var(--text2);line-height:1.5">Rollback: 3 consecutive red SLI windows OR checkout −30 bp vs baseline; no 25% widen while burn accelerates.</div>
+            </div>
+          </div>
+
+          <!-- Session progress -->
+          <div class="card" style="padding:14px 16px">
+            <div class="card-title" style="margin-bottom:10px">Session Progress</div>
+            <div class="prog-row"><span class="prog-label" style="width:120px">Context</span><div class="prog-wrap"><div class="prog-bar pb-green" style="width:100%"></div></div><span class="prog-val">✓</span></div>
+            <div class="prog-row"><span class="prog-label" style="width:120px">Incident narratives</span><div class="prog-wrap"><div class="prog-bar pb-green" style="width:60%"></div></div><span class="prog-val">60%</span></div>
+            <div class="prog-row"><span class="prog-label" style="width:120px">Runbooks &amp; links</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:25%"></div></div><span class="prog-val">25%</span></div>
+            <div class="prog-row"><span class="prog-label" style="width:120px">Decision rules</span><div class="prog-wrap"><div class="prog-bar pb-red" style="width:10%"></div></div><span class="prog-val">10%</span></div>
+            <div class="prog-row"><span class="prog-label" style="width:120px">Validation</span><div class="prog-wrap"><div class="prog-bar" style="width:0%;background:var(--text3)"></div></div><span class="prog-val">—</span></div>
+            <div style="margin-top:10px;font-size:11px;color:var(--text3)">~28 min remaining</div>
+          </div>
+
+          <!-- Smart highlights from speech -->
+          <div class="card" style="padding:14px 16px">
+            <div class="card-title" style="margin-bottom:8px">AI Highlights from Audio</div>
+            <div id="audioHighlights">
+              <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px"></div>
+                <div style="font-size:11px;color:var(--text2);line-height:1.5"><strong style="color:var(--text);font-family:'Syne',sans-serif">Rollback trigger:</strong> three red SLI windows or checkout −30 bp — explicit numeric gate</div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></div>
+                <div style="font-size:11px;color:var(--text2);line-height:1.5"><strong style="color:var(--text);font-family:'Syne',sans-serif">Hidden failure mode:</strong> flat p99 + cohort-only 5xx — slice by client / region</div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:8px">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px"></div>
+                <div style="font-size:11px;color:var(--text2);line-height:1.5"><strong style="color:var(--text);font-family:'Syne',sans-serif">Ownership:</strong> grey zone → serving on-call → TPM escalation; no silent widen</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ EMPLOYEE NETWORK ═══════════════════ -->
+    <div id="screen-graph" class="screen">
+      <div class="grid-2-3">
+        <div class="card">
+          <div class="card-title">Employee Network</div>
+          <p class="net-ref">Each node is an employee. Node color shows department and node size reflects degree centrality (dependency count). Critical employees are highlighted using combined <strong>degree + betweenness centrality</strong>, then mapped to knowledge-capture status.</p>
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:10px">
+            <button class="tb-btn" style="padding:6px 12px;font-size:16px;font-weight:700;line-height:1" onclick="zoomEmployeeNetwork(0.75)" title="Zoom in">+</button>
+            <button class="tb-btn" style="padding:6px 12px;font-size:16px;font-weight:700;line-height:1" onclick="zoomEmployeeNetwork(1.35)" title="Zoom out">−</button>
+            <button class="tb-btn" style="padding:6px 12px;font-size:12px;font-weight:600" onclick="resetEmployeeNetworkZoom();renderEmployeeNetwork()">Reset</button>
+          </div>
+          <div class="mem-legend">
+            <span class="mem-pill"><b>Finance</b> <span style="display:inline-block;width:10px;height:10px;background:#b91c1c;border-radius:50%;margin-left:6px;vertical-align:middle"></span></span>
+            <span class="mem-pill"><b>HR</b> <span style="display:inline-block;width:10px;height:10px;background:#f59e0b;border-radius:50%;margin-left:6px;vertical-align:middle"></span></span>
+            <span class="mem-pill"><b>IT</b> <span style="display:inline-block;width:10px;height:10px;background:#3b82f6;border-radius:50%;margin-left:6px;vertical-align:middle"></span></span>
+            <span class="mem-pill"><b>Sales</b> <span style="display:inline-block;width:10px;height:10px;background:#14b8a6;border-radius:50%;margin-left:6px;vertical-align:middle"></span></span>
+            <span class="mem-pill"><b>Marketing</b> <span style="display:inline-block;width:10px;height:10px;background:#a21caf;border-radius:50%;margin-left:6px;vertical-align:middle"></span></span>
+          </div>
+          <div class="graph-container" style="margin-bottom:0;max-height:620px">
+            <svg class="graph-svg" id="employeeNetworkSvg" viewBox="0 0 980 900" aria-label="Employee network graph"></svg>
+          </div>
+          <div class="node-detail" id="riskNodeDetail" style="margin-top:12px">
+            <div class="nd-title" id="riskNdTitle">Select an employee node</div>
+            <div class="nd-type" id="riskNdType"></div>
+            <div id="riskNdItems"></div>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+              <span class="tag tag-gray" id="riskNdOwner"></span>
+              <span class="tag tag-gray" id="riskNdScore"></span>
+            </div>
+            <div style="margin-top:10px">
+              <a href="#" id="riskNdRepo" class="tb-btn" style="display:inline-block;text-decoration:none;padding:6px 10px;font-size:12px" onclick="event.preventDefault();openEmployeeKnowledgeBase()">Open in Knowledge Base</a>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="card-title">Critical employees (degree + betweenness)</div>
+            <table class="data-table">
+              <thead><tr><th>Employee</th><th>Dept</th><th>Degree</th><th>Betw.</th><th>Capture status</th></tr></thead>
+              <tbody id="criticalEmployeesBody"></tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card-title">Network KPIs</div>
+            <div class="prog-row"><span class="prog-label" style="width:180px">Critical employees</span><div class="prog-wrap"><div class="prog-bar pb-red" style="width:24%"></div></div><span class="prog-val" id="kpiCriticalCount">0</span></div>
+            <div class="prog-row"><span class="prog-label" style="width:180px">Captured (critical)</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:0%" id="kpiCriticalCaptureBar"></div></div><span class="prog-val" id="kpiCriticalCapture">0%</span></div>
+            <div class="prog-row"><span class="prog-label" style="width:180px">Uncaptured (critical)</span><div class="prog-wrap"><div class="prog-bar pb-red" style="width:0%" id="kpiCriticalGapBar"></div></div><span class="prog-val" id="kpiCriticalGap">0%</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Actions</div>
+            <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">Prioritize critical employees with low capture. Start with highest betweenness to reduce workflow bottlenecks fastest.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="tb-btn" onclick="showScreen('offboarding')">Open Knowledge Capture</button>
+              <button class="tb-btn primary" onclick="showToast('Exporting employee network risk report…')">Export report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ KNOWLEDGE BASE ═══════════════════ -->
+    <div id="screen-twin" class="screen">
+      <div class="grid-2-3" style="margin-bottom:0">
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Ask the Knowledge Base</div>
+            <div class="twin-query-row">
+              <input class="twin-input" id="twinInput" type="text" placeholder="e.g. When do we roll back a 5% canary if latency is flat but errors tick up?" onkeydown="if(event.key==='Enter') queryTwin()"/>
+              <button class="twin-btn" onclick="queryTwin()">Ask →</button>
+            </div>
+            <div class="card-title" style="margin-bottom:8px;margin-top:4px">Suggested Questions</div>
+            <div class="twin-suggested">
+              <div class="sug-chip" onclick="setAndQuery('How should we interpret a flat A/B lift when guardrail metrics moved?')">Flat experiment but guardrails moved?</div>
+              <div class="sug-chip" onclick="setAndQuery('What must be in the PRD before eng scopes a quarter-sized project?')">PRD before eng scoping?</div>
+              <div class="sug-chip" onclick="setAndQuery('What are our rollback criteria for a 5% canary rollout?')">Canary rollback criteria?</div>
+              <div class="sug-chip" onclick="setAndQuery('How do we run a cross-org exec review for a hard dependency?')">Cross-org exec review?</div>
+              <div class="sug-chip" onclick="setAndQuery('When should analytics file a data quality incident vs patch the pipeline?')">Data quality: incident vs hotfix?</div>
+            </div>
+          </div>
+          <div id="twinResult" class="twin-result">
+            <div class="tr-question" id="trQuestion"></div>
+            <div id="twinMatchNote" style="display:none"></div>
+            <div id="twinStructured" class="tr-structured"></div>
+            <div class="tr-meta">
+              <div class="confidence-bar">
+                <span class="conf-label">Confidence</span>
+                <div class="conf-dots" id="confDots"></div>
+              </div>
+              <div class="tr-source" id="trSource"></div>
+              <div class="tr-source" id="trDate"></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="card-title">Knowledge graph <span style="font-size:10px;font-weight:400;color:var(--text3);text-transform:none;letter-spacing:0">— rebuilds from your search</span></div>
+            <div class="graph-container" style="max-height:320px;min-height:260px;margin-bottom:10px">
+              <svg class="graph-svg" viewBox="0 0 700 400" id="twinGraphSvg" aria-hidden="true">
+                <text x="350" y="200" text-anchor="middle" fill="var(--text3)" font-size="12" font-family="Inter,sans-serif">Ask a question to see the knowledge graph</text>
+              </svg>
+            </div>
+            <div class="node-detail visible" id="twinNodeDetail" style="margin-top:0">
+              <div class="nd-title" id="twinNdTitle">Select a node</div>
+              <div class="nd-type" id="twinNdType"></div>
+              <div id="twinNdItems"></div>
+              <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+                <span class="tag tag-gray" id="twinNdExpert"></span>
+                <span class="tag tag-gray" id="twinNdDate"></span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Query History</div>
+            <div id="queryHistory" style="max-height:120px;overflow-y:auto">
+              <div style="font-size:12px;color:var(--text3);text-align:center;padding:12px 0">No queries yet</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══════════════════ RISK DASHBOARD ═══════════════════ -->
+    <div id="screen-risk" class="screen">
+      <div class="grid-4">
+        <div class="card" style="display:flex;gap:14px;align-items:center">
+          <div class="risk-ring">
+            <svg viewBox="0 0 90 90" width="90" height="90">
+              <circle cx="45" cy="45" r="35" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+              <circle cx="45" cy="45" r="35" fill="none" stroke="#fbbf24" stroke-width="8" stroke-dasharray="147 73" stroke-linecap="round"/>
+            </svg>
+            <div class="risk-ring-text"><span class="risk-ring-num" style="color:var(--amber)">67</span><span class="risk-ring-label">Risk</span></div>
+          </div>
+          <div><div class="card-title">Overall Score</div><div style="font-size:12px;color:var(--amber)">Medium Risk</div><div style="font-size:11px;color:var(--text3);margin-top:4px">2 critical SPOFs identified</div></div>
+        </div>
+        <div class="card"><div class="card-title">Single Points of Failure</div><div class="metric-val red">2</div><div class="metric-sub">Critical knowledge holders</div></div>
+        <div class="card"><div class="card-title">Stale Records</div><div class="metric-val amber">6</div><div class="metric-sub">&gt;12 months without revalidation</div></div>
+        <div class="card"><div class="card-title">Unanswered Queries</div><div class="metric-val amber">14</div><div class="metric-sub">In last 30 days · gaps in coverage</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Single Points of Failure</div>
+          <div class="spof-card">
+            <div class="spof-header">
+              <div><div class="spof-name">K. Tan</div><div class="spof-domain">Serving &amp; canary — sole rollback authority in practice</div></div>
+              <span class="tag tag-red">Critical</span>
+            </div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:6px">Leaving Jan 31. Automated rollback hooks and grey-zone judgment for production live in one engineer’s head. Vera session not started.</div>
+            <div class="spof-risk">
+              <span class="spof-tag">Canary criteria</span>
+              <span class="spof-tag">SLI windows</span>
+              <span class="spof-tag">Cohort slicing</span>
+              <span class="spof-tag">Escalation to TPM</span>
+            </div>
+            <button class="ob-action start" style="margin-top:8px" onclick="showScreen('vera')">Schedule Vera Session Now</button>
+          </div>
+          <div class="spof-card">
+            <div class="spof-header">
+              <div><div class="spof-name">J. Rivera</div><div class="spof-domain">Ads metrics &amp; experimentation — sole PRD + OEC owner</div></div>
+              <span class="tag tag-red">Critical</span>
+            </div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:6px">Resigning Feb 15. Quarter-commit gates, guardrail policy, and exec review format for experiments are undocumented outside their calendar.</div>
+            <div class="spof-risk">
+              <span class="spof-tag">PRD readiness</span>
+              <span class="spof-tag">Guardrail policy</span>
+              <span class="spof-tag">OKR mapping</span>
+              <span class="spof-tag">Exec review cadence</span>
+            </div>
+            <button class="ob-action start" style="margin-top:8px" onclick="showScreen('vera')">Schedule Vera Session Now</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="card-title">Knowledge Coverage by Domain</div>
+            <div class="coverage-grid">
+              <div class="cov-card"><div class="cov-domain">Experimentation &amp; DS</div><div class="cov-bar-wrap"><div class="cov-bar" style="width:84%;background:var(--green)"></div></div><span class="cov-pct">84% covered</span></div>
+              <div class="cov-card"><div class="cov-domain">Developer productivity</div><div class="cov-bar-wrap"><div class="cov-bar" style="width:90%;background:var(--green)"></div></div><span class="cov-pct">90% covered</span></div>
+              <div class="cov-card"><div class="cov-domain">Security &amp; compliance</div><div class="cov-bar-wrap"><div class="cov-bar" style="width:67%;background:var(--amber)"></div></div><span class="cov-pct">67% covered</span></div>
+              <div class="cov-card"><div class="cov-domain">Product &amp; roadmap</div><div class="cov-bar-wrap"><div class="cov-bar" style="width:51%;background:var(--amber)"></div></div><span class="cov-pct">51% covered</span></div>
+              <div class="cov-card"><div class="cov-domain">Data platform</div><div class="cov-bar-wrap"><div class="cov-bar" style="width:28%;background:var(--red)"></div></div><span class="cov-pct">28% covered</span></div>
+              <div class="cov-card"><div class="cov-domain">ML platform</div><div class="cov-bar-wrap"><div class="cov-bar" style="width:44%;background:var(--amber)"></div></div><span class="cov-pct">44% covered</span></div>
+              <div class="cov-card"><div class="cov-domain">Infra &amp; reliability</div><div class="cov-bar-wrap"><div class="cov-bar" style="width:78%;background:var(--green)"></div></div><span class="cov-pct">78% covered</span></div>
+              <div class="cov-card"><div class="cov-domain">Agent evals &amp; policy</div><div class="cov-bar-wrap"><div class="cov-bar" style="width:19%;background:var(--red)"></div></div><span class="cov-pct">19% covered</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Staleness Alerts — Overdue Revalidation</div>
+            <table class="data-table">
+              <thead><tr><th>Record</th><th>Expert</th><th>Age</th></tr></thead>
+              <tbody>
+                <tr><td>On-call runbook — payment edge</td><td>M. Okonkwo (left)</td><td><span class="tag tag-red">18 months</span></td></tr>
+                <tr><td>Canary policy v2</td><td>K. Tan (leaving)</td><td><span class="tag tag-amber">14 months</span></td></tr>
+                <tr><td>Data quality severity rubric</td><td>Contractor (left)</td><td><span class="tag tag-red">22 months</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ PEOPLE ═══════════════════ -->
+    <div id="screen-people" class="screen">
+      <div class="grid-4">
+        <div class="card"><div class="card-title">Total Experts Profiled</div><div class="metric-val">12</div><div class="metric-sub">With active knowledge records</div></div>
+        <div class="card"><div class="card-title">Departing (30 days)</div><div class="metric-val red">2</div><div class="metric-sub">Urgent capture required</div></div>
+        <div class="card"><div class="card-title">Avg Knowledge Score</div><div class="metric-val amber">62%</div><div class="metric-sub">Knowledge captured vs. estimated held</div></div>
+        <div class="card"><div class="card-title">New Hires Onboarded via Twin</div><div class="metric-val green">4</div><div class="metric-sub">Used Knowledge Base in first week</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Expert Directory</div>
+          <div class="person-row">
+            <div class="person-av av-red">KT</div>
+            <div class="person-info"><div class="person-name">K. Tan</div><div class="person-role">Staff SWE · Serving &amp; canary · 9 yrs</div></div>
+            <div class="person-right"><div class="person-status"><span class="tag tag-red">Leaving Jan 31</span></div><div style="font-size:11px;color:var(--text3);margin-top:4px">0 / 12 records captured</div></div>
+          </div>
+          <div class="person-row">
+            <div class="person-av av-amber">JR</div>
+            <div class="person-info"><div class="person-name">J. Rivera</div><div class="person-role">Principal PM · Ads metrics · 12 yrs</div></div>
+            <div class="person-right"><div class="person-status"><span class="tag tag-amber">Leaving Feb 15</span></div><div style="font-size:11px;color:var(--text3);margin-top:4px">0 / 9 records captured</div></div>
+          </div>
+          <div class="person-row">
+            <div class="person-av av-green">MO</div>
+            <div class="person-info"><div class="person-name">M. Okonkwo (left)</div><div class="person-role">Staff DS · Experimentation · 11 yrs</div></div>
+            <div class="person-right"><div class="person-status"><span class="tag tag-green">24 records</span></div><div style="font-size:11px;color:var(--text3);margin-top:4px">84% captured</div></div>
+          </div>
+          <div class="person-row">
+            <div class="person-av av-green">SR</div>
+            <div class="person-info"><div class="person-name">S. Reeves (left)</div><div class="person-role">Sr PM · Subscriptions · 8 yrs</div></div>
+            <div class="person-right"><div class="person-status"><span class="tag tag-green">16 records</span></div><div style="font-size:11px;color:var(--text3);margin-top:4px">78% captured</div></div>
+          </div>
+          <div class="person-row">
+            <div class="person-av av-blue">LP</div>
+            <div class="person-info"><div class="person-name">L. Park</div><div class="person-role">Research Scientist · Agent evals · 6 yrs</div></div>
+            <div class="person-right"><div class="person-status"><span class="tag tag-blue">Session Feb 12</span></div><div style="font-size:11px;color:var(--text3);margin-top:4px">4 records so far</div></div>
+          </div>
+          <div class="person-row">
+            <div class="person-av av-green">AD</div>
+            <div class="person-info"><div class="person-name">A. Dubois</div><div class="person-role">TPM · ML platform · 10 yrs</div></div>
+            <div class="person-right"><div class="person-status"><span class="tag tag-green">Active</span></div><div style="font-size:11px;color:var(--text3);margin-top:4px">6 records</div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="card-title">Knowledge Concentration Risk</div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:12px">% of domain knowledge held by a single person</div>
+            <div class="prog-row"><span class="prog-label">Serving / canary (KT sole)</span><div class="prog-wrap"><div class="prog-bar pb-red" style="width:85%"></div></div><span class="prog-val" style="color:var(--red)">85%</span></div>
+            <div class="prog-row"><span class="prog-label">Experimentation (JR sole)</span><div class="prog-wrap"><div class="prog-bar pb-red" style="width:90%"></div></div><span class="prog-val" style="color:var(--red)">90%</span></div>
+            <div class="prog-row"><span class="prog-label">Agent evals (LP dominant)</span><div class="prog-wrap"><div class="prog-bar pb-amber" style="width:60%"></div></div><span class="prog-val">60%</span></div>
+            <div class="prog-row"><span class="prog-label">Data platform (distributed)</span><div class="prog-wrap"><div class="prog-bar pb-green" style="width:30%"></div></div><span class="prog-val">30%</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Departure Readiness Score</div>
+            <table class="data-table">
+              <thead><tr><th>Person</th><th>Score</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><span style="color:var(--text);font-weight:600;font-family:'Syne',sans-serif">K. Tan</span></td><td><span style="color:var(--red)">0%</span></td><td><span class="tag tag-red">Not ready</span></td></tr>
+                <tr><td><span style="color:var(--text);font-weight:600;font-family:'Syne',sans-serif">J. Rivera</span></td><td><span style="color:var(--red)">0%</span></td><td><span class="tag tag-red">Not ready</span></td></tr>
+                <tr><td><span style="color:var(--text);font-weight:600;font-family:'Syne',sans-serif">L. Park</span></td><td><span style="color:var(--amber)">40%</span></td><td><span class="tag tag-amber">In progress</span></td></tr>
+                <tr><td><span style="color:var(--text);font-weight:600;font-family:'Syne',sans-serif">M. Okonkwo</span></td><td><span style="color:var(--success)">84%</span></td><td><span class="tag tag-green">Ready</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ INTEGRATIONS ═══════════════════ -->
+    <div id="screen-integrations" class="screen">
+      <div class="int-hero">
+        <div class="int-hero-title">Connect your stack to <span>Vera</span></div>
+        <p>ExpertMind ingests conversations, meetings, tickets, and calendar context from the tools your teams already use. Follow these steps so Vera can keep your organisational memory up to date and reason over the full picture—not just siloed notes.</p>
+      </div>
+
+      <div class="section-div">
+        <span class="section-div-title">Integrations — click a row to expand setup steps</span>
+        <div class="section-div-line"></div>
+      </div>
+
+      <div class="int-list">
+        <details class="int-acc">
+          <summary>
+            <span class="int-logo" aria-hidden="true"><svg class="int-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#6264A7" d="M20.625 8.127q-.55 0-1.025-.205-.475-.205-.832-.563-.358-.357-.563-.832Q18 6.053 18 5.502q0-.54.205-1.02t.563-.837q.357-.358.832-.563.474-.205 1.025-.205.54 0 1.02.205t.837.563q.358.357.563.837.205.48.205 1.02 0 .55-.205 1.025-.205.475-.563.832-.357.358-.837.563-.48.205-1.02.205zm0-3.75q-.469 0-.797.328-.328.328-.328.797 0 .469.328.797.328.328.797.328.469 0 .797-.328.328-.328.328-.797 0-.469-.328-.797-.328-.328-.797-.328zM24 10.002v5.578q0 .774-.293 1.46-.293.685-.803 1.194-.51.51-1.195.803-.686.293-1.459.293-.445 0-.908-.105-.463-.106-.85-.329-.293.95-.855 1.729-.563.78-1.319 1.336-.756.557-1.67.861-.914.305-1.898.305-1.148 0-2.162-.398-1.014-.399-1.805-1.102-.79-.703-1.312-1.664t-.674-2.086h-5.8q-.411 0-.704-.293T0 16.881V6.873q0-.41.293-.703t.703-.293h8.59q-.34-.715-.34-1.5 0-.727.275-1.365.276-.639.75-1.114.475-.474 1.114-.75.638-.275 1.365-.275t1.365.275q.639.276 1.114.75.474.475.75 1.114.275.638.275 1.365t-.275 1.365q-.276.639-.75 1.113-.475.475-1.114.75-.638.276-1.365.276-.188 0-.375-.024-.188-.023-.375-.058v1.078h10.875q.469 0 .797.328.328.328.328.797zM12.75 2.373q-.41 0-.78.158-.368.158-.638.434-.27.275-.428.639-.158.363-.158.773 0 .41.158.78.159.368.428.638.27.27.639.428.369.158.779.158.41 0 .773-.158.364-.159.64-.428.274-.27.433-.639.158-.369.158-.779 0-.41-.158-.773-.159-.364-.434-.64-.275-.275-.639-.433-.363-.158-.773-.158zM6.937 9.814h2.25V7.94H2.814v1.875h2.25v6h1.875zm10.313 7.313v-6.75H12v6.504q0 .41-.293.703t-.703.293H8.309q.152.809.556 1.5.405.691.985 1.19.58.497 1.318.779.738.281 1.582.281.926 0 1.746-.352.82-.351 1.436-.966.615-.616.966-1.43.352-.815.352-1.752zm5.25-1.547v-5.203h-3.75v6.855q.305.305.691.452.387.146.809.146.469 0 .879-.176.41-.175.715-.48.304-.305.48-.715t.176-.879Z"/></svg></span>
+            <span class="int-acc-titles">
+              <span class="int-brand">Microsoft Teams</span>
+              <span class="int-teaser">Channels, files &amp; meeting context → Vera</span>
+            </span>
+            <span class="tag tag-blue">M365</span>
+            <span class="int-acc-chev" aria-hidden="true">▼</span>
+          </summary>
+          <div class="int-acc-body">
+            <p class="int-desc">Surface channel threads, shared files, and meeting chat so Vera can tie discussions to experts and assets.</p>
+            <div class="int-sync-label">Vera syncs</div>
+            <ul class="int-sync">
+              <li>Messages and replies in selected teams and channels</li>
+              <li>File names and links shared in thread context</li>
+              <li>Meeting summaries where your tenant allows Graph access</li>
+            </ul>
+            <div class="int-steps-label">Setup steps</div>
+            <ol class="int-steps">
+              <li>In Azure Entra ID, register (or approve) the ExpertMind enterprise application and grant admin consent for the required Microsoft Graph permissions.</li>
+              <li>From ExpertMind <span class="mono">Settings → Integrations</span>, choose Teams and sign in with a Global Administrator or Teams Administrator account.</li>
+              <li>Select the teams and channels to include; map each to a knowledge domain or product area for retrieval in Knowledge Base.</li>
+              <li>Install the ExpertMind app to the workspace (tab or bot, per your deployment model) so members can @-mention Vera where work happens.</li>
+              <li>Run a test sync and confirm new activity appears in Knowledge Base and org knowledge graph views within the expected window.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="int-acc">
+          <summary>
+            <span class="int-logo" aria-hidden="true"><svg class="int-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#E01E5A" d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52z"/><path fill="#36C5F0" d="M6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z"/><path fill="#2EB67D" d="M8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834z"/><path fill="#ECB22E" d="M8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312z"/><path fill="#E01E5A" d="M18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834z"/><path fill="#36C5F0" d="M17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312z"/><path fill="#2EB67D" d="M15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52z"/><path fill="#ECB22E" d="M15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg></span>
+            <span class="int-acc-titles">
+              <span class="int-brand">Slack</span>
+              <span class="int-teaser">Workspace channels &amp; threads → Vera</span>
+            </span>
+            <span class="tag tag-gray">Workspace</span>
+            <span class="int-acc-chev" aria-hidden="true">▼</span>
+          </summary>
+          <div class="int-acc-body">
+            <p class="int-desc">Capture institutional knowledge from public and agreed private channels without changing how engineers already collaborate.</p>
+            <div class="int-sync-label">Vera syncs</div>
+            <ul class="int-sync">
+              <li>Messages in connected channels (with retention policy respected)</li>
+              <li>Thread context and file metadata</li>
+              <li>User display names mapped to your people directory</li>
+            </ul>
+            <div class="int-steps-label">Setup steps</div>
+            <ol class="int-steps">
+              <li>As a Slack workspace owner or admin, open ExpertMind and start the Slack connection flow.</li>
+              <li>Approve OAuth scopes for channels, users, and files as shown in the consent screen.</li>
+              <li>Pick channels (e.g. <span class="mono">#incidents</span>, <span class="mono">#ship-room</span>) that should feed Vera.</li>
+              <li>Enable event subscriptions so new messages arrive in near real time.</li>
+              <li>Invite the ExpertMind bot to private channels only where policy allows and repeat channel selection.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="int-acc">
+          <summary>
+            <span class="int-logo" aria-hidden="true"><svg class="int-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#0052CC" d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.001 1.001 0 0 0 23.013 0Z"/></svg></span>
+            <span class="int-acc-titles">
+              <span class="int-brand">Jira</span>
+              <span class="int-teaser">Issues, comments &amp; projects → Vera</span>
+            </span>
+            <span class="tag tag-blue">Atlassian</span>
+            <span class="int-acc-chev" aria-hidden="true">▼</span>
+          </summary>
+          <div class="int-acc-body">
+            <p class="int-desc">Link incidents, CAPAs, and technical debt to the experts and procedures Vera already models.</p>
+            <div class="int-sync-label">Vera syncs</div>
+            <ul class="int-sync">
+              <li>Issues, descriptions, comments, and status transitions</li>
+              <li>Components, labels, and fix versions (as configured)</li>
+              <li>Attachments metadata and linked Confluence pages when enabled</li>
+            </ul>
+            <div class="int-steps-label">Setup steps</div>
+            <ol class="int-steps">
+              <li>Create an Atlassian API token or OAuth client for your Jira Cloud site (or use our on-prem bridge if applicable).</li>
+              <li>In ExpertMind, add your Jira site URL and credentials; validate with a test query.</li>
+              <li>Define which projects and issue types sync (e.g. Incident, Bug, Story).</li>
+              <li>Register the ExpertMind webhook URL in Jira so updates push when issues change.</li>
+              <li>Map Jira users to corporate directory IDs so assignee and reporter appear correctly in Vera’s context.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="int-acc">
+          <summary>
+            <span class="int-logo" aria-hidden="true"><svg class="int-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#2D8CFF" d="M5.033 14.649H.743a.74.74 0 0 1-.686-.458.74.74 0 0 1 .16-.808L3.19 10.41H1.06A1.06 1.06 0 0 1 0 9.35h3.957c.301 0 .57.18.686.458a.74.74 0 0 1-.161.808L1.51 13.59h2.464c.585 0 1.06.475 1.06 1.06zM24 11.338c0-1.14-.927-2.066-2.066-2.066-.61 0-1.158.265-1.537.686a2.061 2.061 0 0 0-1.536-.686c-1.14 0-2.066.926-2.066 2.066v3.311a1.06 1.06 0 0 0 1.06-1.06v-2.251a1.004 1.004 0 0 1 2.013 0v2.251c0 .586.474 1.06 1.06 1.06v-3.311a1.004 1.004 0 0 1 2.012 0v2.251c0 .586.475 1.06 1.06 1.06zM16.265 12a2.728 2.728 0 1 1-5.457 0 2.728 2.728 0 0 1 5.457 0zm-1.06 0a1.669 1.669 0 1 0-3.338 0 1.669 1.669 0 0 0 3.338 0zm-4.82 0a2.728 2.728 0 1 1-5.458 0 2.728 2.728 0 0 1 5.457 0zm-1.06 0a1.669 1.669 0 1 0-3.338 0 1.669 1.669 0 0 0 3.338 0z"/></svg></span>
+            <span class="int-acc-titles">
+              <span class="int-brand">Zoom</span>
+              <span class="int-teaser">Recordings &amp; transcripts → Vera</span>
+            </span>
+            <span class="tag tag-gray">Meetings</span>
+            <span class="int-acc-chev" aria-hidden="true">▼</span>
+          </summary>
+          <div class="int-acc-body">
+            <p class="int-desc">Turn recorded discussions and transcripts into searchable knowledge for Vera and the Knowledge Base.</p>
+            <div class="int-sync-label">Vera syncs</div>
+            <ul class="int-sync">
+              <li>Cloud recordings and AI Companion / transcript assets your account exposes</li>
+              <li>Meeting topic, time, and host mapped to calendar where linked</li>
+              <li>Participant roster for attribution (per your privacy settings)</li>
+            </ul>
+            <div class="int-steps-label">Setup steps</div>
+            <ol class="int-steps">
+              <li>Sign in to ExpertMind with a Zoom account admin and authorize the ExpertMind Zoom app.</li>
+              <li>Enable cloud recording and transcript features for the meeting types you want Vera to learn from.</li>
+              <li>Subscribe to recording.completed (and transcript) webhooks pointing to ExpertMind’s endpoint.</li>
+              <li>Optional: restrict to specific users, groups, or SSO domains so only approved meetings are ingested.</li>
+              <li>Start a short internal meeting, end recording, and verify the asset appears under the connected integration.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="int-acc">
+          <summary>
+            <span class="int-logo" aria-hidden="true"><svg class="int-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#0078D4" d="M7.88 12.04q0 .45-.11.87-.1.41-.33.74-.22.33-.58.52-.37.2-.87.2t-.85-.2q-.35-.21-.57-.55-.22-.33-.33-.75-.1-.42-.1-.86t.1-.87q.1-.43.34-.76.22-.34.59-.54.36-.2.87-.2t.86.2q.35.21.57.55.22.34.31.77.1.43.1.88zM24 12v9.38q0 .46-.33.8-.33.32-.8.32H7.13q-.46 0-.8-.33-.32-.33-.32-.8V18H1q-.41 0-.7-.3-.3-.29-.3-.7V7q0-.41.3-.7Q.58 6 1 6h6.5V2.55q0-.44.3-.75.3-.3.75-.3h12.9q.44 0 .75.3.3.3.3.75V10.85l1.24.72h.01q.1.07.18.18.07.12.07.25zm-6-8.25v3h3v-3zm0 4.5v3h3v-3zm0 4.5v1.83l3.05-1.83zm-5.25-9v3h3.75v-3zm0 4.5v3h3.75v-3zm0 4.5v2.03l2.41 1.5 1.34-.8v-2.73zM9 3.75V6h2l.13.01.12.04v-2.3zM5.98 15.98q.9 0 1.6-.3.7-.32 1.19-.86.48-.55.73-1.28.25-.74.25-1.61 0-.83-.25-1.55-.24-.71-.71-1.24t-1.15-.83q-.68-.3-1.55-.3-.92 0-1.64.3-.71.3-1.2.85-.5.54-.75 1.3-.25.74-.25 1.63 0 .85.26 1.56.26.72.74 1.23.48.52 1.17.81.69.3 1.56.3zM7.5 21h12.39L12 16.08V17q0 .41-.3.7-.29.3-.7.3H7.5zm15-.13v-7.24l-5.9 3.54Z"/></svg></span>
+            <span class="int-acc-titles">
+              <span class="int-brand">Microsoft Calendar</span>
+              <span class="int-teaser">Outlook / Exchange events → Vera</span>
+            </span>
+            <span class="tag tag-blue">M365</span>
+            <span class="int-acc-chev" aria-hidden="true">▼</span>
+          </summary>
+          <div class="int-acc-body">
+            <p class="int-desc">Give Vera awareness of who met whom, recurring operational reviews, and Vera session bookings.</p>
+            <div class="int-sync-label">Vera syncs</div>
+            <ul class="int-sync">
+              <li>Calendar events, attendees, and locations (scope you define)</li>
+              <li>Links between meetings and Teams calls when both are connected</li>
+              <li>Free/busy hints for scheduling ExpertMind sessions</li>
+            </ul>
+            <div class="int-steps-label">Setup steps</div>
+            <ol class="int-steps">
+              <li>Ensure Microsoft Graph calendar permissions are consented alongside Teams, or connect Calendar-only if you use Exchange without Teams ingestion.</li>
+              <li>Choose application access for room/resource calendars or delegated access for executive sponsors, per your security model.</li>
+              <li>Select mailboxes or groups whose calendars should inform Vera’s timeline.</li>
+              <li>Set whether body text and attachments are included or only metadata (recommended default for external meetings).</li>
+              <li>Confirm Vera session invites from ExpertMind write back to Outlook as expected.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="int-acc">
+          <summary>
+            <span class="int-logo" aria-hidden="true"><svg class="int-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="gchatGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1A73E8"/><stop offset="100%" stop-color="#34A853"/></linearGradient></defs><path fill="url(#gchatGrad)" d="M1.637 0C.733 0 0 .733 0 1.637v16.5c0 .904.733 1.636 1.637 1.636h3.955v3.323c0 .804.97 1.207 1.539.638l3.963-3.96h11.27c.903 0 1.636-.733 1.636-1.637V5.592L18.408 0Zm3.955 5.592h12.816v8.59H8.455l-2.863 2.863Z"/></svg></span>
+            <span class="int-acc-titles">
+              <span class="int-brand">Google Chat</span>
+              <span class="int-teaser">Spaces &amp; messages → Vera</span>
+            </span>
+            <span class="tag tag-amber">Workspace</span>
+            <span class="int-acc-chev" aria-hidden="true">▼</span>
+          </summary>
+          <div class="int-acc-body">
+            <p class="int-desc">Mirror Chat spaces into the same knowledge fabric as Slack and Teams for mixed-vendor enterprises.</p>
+            <div class="int-sync-label">Vera syncs</div>
+            <ul class="int-sync">
+              <li>Messages in configured spaces and DMs where the Chat app is added</li>
+              <li>Thread replies and @mentions of the ExpertMind app</li>
+              <li>Card and link previews as text context</li>
+            </ul>
+            <div class="int-steps-label">Setup steps</div>
+            <ol class="int-steps">
+              <li>In Google Workspace Admin, allow the ExpertMind Chat app for your organisation (or install from the Marketplace).</li>
+              <li>Complete Google OAuth in ExpertMind with a super-admin or delegated installer account.</li>
+              <li>Add the ExpertMind app to each Chat space that should sync; register those space IDs in the console.</li>
+              <li>If required, configure domain-wide delegation for service accounts following Google’s Chat API guidelines.</li>
+              <li>Send a test message in a connected space and check ingestion logs in ExpertMind.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="int-acc">
+          <summary>
+            <span class="int-logo" aria-hidden="true"><svg class="int-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="gmeetGrad" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00832D"/><stop offset="55%" stop-color="#34A853"/><stop offset="100%" stop-color="#FBBC04"/></linearGradient></defs><path fill="url(#gmeetGrad)" d="M5.53 2.13 0 7.75h5.53zm.398 0v5.62h7.608v3.65l5.47-4.45c-.014-1.22.031-2.25-.025-3.46-.148-1.09-1.287-1.47-2.236-1.36zM23.1 4.32c-.802.295-1.358.995-2.047 1.49-2.506 2.05-4.982 4.12-7.468 6.19 3.025 2.59 6.04 5.18 9.065 7.76 1.218.671 1.428-.814 1.328-1.64v-13a.828.828 0 0 0-.877-.825zM.038 8.15v7.7h5.53v-7.7zm13.577 8.1H6.008v5.62c3.864-.006 7.737.011 11.58-.009 1.02-.07 1.618-1.12 1.468-2.07v-2.51l-5.47-4.68v3.65zm-13.577 0c.02 1.44-.041 2.88.033 4.31.162.948 1.158 1.43 2.047 1.31h3.464v-5.62z"/></svg></span>
+            <span class="int-acc-titles">
+              <span class="int-brand">Google Meet</span>
+              <span class="int-teaser">Calendar, Drive recordings → Vera</span>
+            </span>
+            <span class="tag tag-amber">Workspace</span>
+            <span class="int-acc-chev" aria-hidden="true">▼</span>
+          </summary>
+          <div class="int-acc-body">
+            <p class="int-desc">Combine Meet attendance and recordings with Calendar so Vera understands what was decided in live sessions.</p>
+            <div class="int-sync-label">Vera syncs</div>
+            <ul class="int-sync">
+              <li>Meetings tied to Google Calendar events you’ve connected</li>
+              <li>Recorded meetings and transcripts saved to Drive (when recording is on)</li>
+              <li>Participant lists aligned with your directory</li>
+            </ul>
+            <div class="int-steps-label">Setup steps</div>
+            <ol class="int-steps">
+              <li>Connect Google Calendar in ExpertMind (same flow as above or shared Workspace link).</li>
+              <li>Turn on Meet recording to Drive for the organisational units that should feed Vera, per policy.</li>
+              <li>Grant ExpertMind read access to the Drive folder or shared drive where Meet artifacts land.</li>
+              <li>Map Meet series (e.g. weekly reliability review) to a domain label for easier retrieval in Vera.</li>
+              <li>After a recorded Meet, confirm the transcript is picked up and linked to the calendar event.</li>
+            </ol>
+          </div>
+        </details>
+      </div>
+
+      <p class="int-footnote"><strong class="sans" style="color:var(--text)">Security note.</strong> All connectors use tenant-isolated credentials, least-privilege scopes, and configurable data minimisation. Your IT or InfoSec team can review our data-processing agreement and revoke access from the ExpertMind admin console at any time.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-newSession">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('newSession')">×</button>
+    <div class="modal-title">Schedule Vera Session</div>
+    <div class="modal-sub">Set up a knowledge capture interview with an expert</div>
+    <div class="form-row">
+      <label class="form-label">Expert / Employee</label>
+      <select class="form-select">
+        <option>K. Tan — Staff SWE, serving</option>
+        <option>J. Rivera — Principal PM, ads metrics</option>
+        <option>L. Park — Research scientist, agent evals</option>
+        <option>Other (add manually)</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Knowledge Domain</label>
+      <select class="form-select">
+        <option>Infra &amp; safe rollout</option>
+        <option>Experimentation &amp; metrics</option>
+        <option>Product / PRD process</option>
+        <option>Data platform &amp; quality</option>
+        <option>ML platform &amp; compliance</option>
+        <option>Agent evals &amp; policy</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Session Date</label>
+      <input class="form-input" type="date" value="2026-02-10"/>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Notes for Vera</label>
+      <input class="form-input" type="text" placeholder="e.g. Focus on canary rollback criteria and dashboards"/>
+    </div>
+    <div class="modal-actions">
+      <button class="tb-btn" onclick="closeModal('newSession')">Cancel</button>
+      <button class="tb-btn primary" onclick="scheduleSession()">Schedule Session</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-addDeparture">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('addDeparture')">×</button>
+    <div class="modal-title">Add Departure Case</div>
+    <div class="modal-sub">Track an employee leaving the organisation</div>
+    <div class="form-row">
+      <label class="form-label">Employee Name</label>
+      <input class="form-input" type="text" placeholder="Full name"/>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Role / Department</label>
+      <input class="form-input" type="text" placeholder="e.g. Senior Engineer, Operations"/>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Departure Type</label>
+      <select class="form-select">
+        <option>Retirement</option>
+        <option>Resignation</option>
+        <option>Layoff / RIF</option>
+        <option>Transfer</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Last Day</label>
+      <input class="form-input" type="date"/>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Primary Knowledge Domain</label>
+      <input class="form-input" type="text" placeholder="e.g. Experimentation playbook, on-call runbooks"/>
+    </div>
+    <div class="modal-actions">
+      <button class="tb-btn" onclick="closeModal('addDeparture')">Cancel</button>
+      <button class="tb-btn primary" onclick="addDeparture()">Add &amp; Schedule Vera</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✓</span>
+  <span class="toast-text" id="toastText">Done</span>
+</div>
+
+<script>
+// ─── NAVIGATION ───
+const pageTitles = {
+  dashboard: 'Dashboard',
+  offboarding: 'Knowledge Capture',
+  vera: 'Vera — Knowledge Capture',
+  graph: 'Employee Network',
+  twin: 'Knowledge Base',
+  risk: 'Risk Dashboard',
+  people: 'People & Experts',
+  integrations: 'Integrations — Connect your stack'
+};
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  document.getElementById('pageTitle').textContent = pageTitles[id] || id;
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    if (item.getAttribute('onclick') && item.getAttribute('onclick').includes("'" + id + "'")) {
+      item.classList.add('active');
+    }
+  });
+}
+
+// ─── MODAL ───
+function showModal(id) {
+  document.getElementById('modal-' + id).classList.add('visible');
+}
+function closeModal(id) {
+  document.getElementById('modal-' + id).classList.remove('visible');
+}
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('visible'); });
+});
+
+// ─── TOAST ───
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastText').textContent = msg;
+  t.classList.add('visible');
+  setTimeout(() => t.classList.remove('visible'), 3000);
+}
+
+// ─── MODAL ACTIONS ───
+function scheduleSession() {
+  closeModal('newSession');
+  showToast('Vera session scheduled — expert will receive a calendar invite');
+}
+function addDeparture() {
+  closeModal('addDeparture');
+  showToast('Departure case added — Vera session auto-scheduled');
+}
+
+// ─── VERA CHAT ───
+const veraResponses = [
+  "That documentation bar makes sense — runbook in the wiki, flag key in LaunchDarkly, and deep links to the Datadog board. **After rollback, what's your rule for re-attempting — same flag, new binary, or kill the experiment entirely?**",
+  "Understood — you'd require a blameless postmortem before any retry touches prod. **How do you propagate that learning to the Knowledge Base graph so PMs see it when they ask about canaries?**",
+  "Perfect — linking the runbook node to PRD and experiment entities is exactly what we need. **Last one: any difference in criteria when the change touches model serving vs. plain API logic?**"
+];
+let veraStep = 0;
+function sendVeraMsg() {
+  const input = document.getElementById('veraInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const chat = document.getElementById('veraChat');
+  const latest = document.getElementById('latestMsg');
+  latest.style.display = 'flex';
+  document.getElementById('latestBubble').textContent = text;
+  input.value = '';
+  const typing = document.getElementById('veraTyping');
+  typing.style.display = 'flex';
+  chat.scrollTop = chat.scrollHeight;
+  setTimeout(() => {
+    typing.style.display = 'none';
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg';
+    const resp = veraResponses[veraStep % veraResponses.length];
+    msg.innerHTML = `<div class="chat-av vera">V</div><div class="chat-bubble vera">${resp.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`;
+    chat.insertBefore(msg, typing);
+    veraStep++;
+    const pct = Math.min(35 + veraStep * 15, 95);
+    document.getElementById('veraProgress').style.width = pct + '%';
+    chat.scrollTop = chat.scrollHeight;
+    showToast('New entity extracted from response');
+  }, 1800);
+}
+document.getElementById('veraInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendVeraMsg(); }
+});
+
+// ─── KNOWLEDGE BASE — KNOWLEDGE GRAPH (org entities) ───
+const twinGraphNodeData = {
+  canary: { title: 'Canary 5% rollout', type: 'Release · Serving', items: ['Standard path: 5% → 25% → 100% with automated SLI gates', 'Tied to feature flags and config service; owner: on-call rotation', 'Knowledge Base links this node to rollback and PRD commit decisions'], artifacts: ['Runbook: Canary promotion checklist', 'Dashboards: Canary vs baseline SLI sheet'], people: ['K. Tan (SRE)', 'A. Dubois (TPM)'], expert: 'K. Tan', date: 'Session Feb 2026' },
+  incident: { title: 'Error budget burn', type: 'Incident signal · Reliability', items: ['Triggers when error rate or latency SLO consumes budget faster than burn allocation', 'Auto-page if burn rate > 2× for two windows; doc’d in runbook excerpt', 'Not the same as “flat” primary metric in an A/B — different graph edge'], expert: 'K. Tan', date: 'Infra council' },
+  sli: { title: 'SLI / SLO pair', type: 'Policy · Observability', items: ['Availability + p99 latency are first-class; compare canary vs baseline cohort', 'Dashboards live in Datadog; links ingested into ExpertMind from Vera', 'Weighted edges in customer-risk graph use similar shortest-path intuition'], expert: 'Platform SRE', date: 'Validated' },
+  guardrail: { title: 'Guardrail metrics', type: 'Experiment policy · Data', items: ['Pre-registered before launch; OEC can be flat while guardrails move', 'Stop / iterate when boundary crossed — captured from M. Okonkwo session', 'Connected to A/B experiment node in this subgraph'], expert: 'M. Okonkwo', date: 'Jan 2026' },
+  rollback: { title: 'Rollback runbook', type: 'Control action · SRE', items: ['One-click revert + traffic drain procedure; tested quarterly', 'Criteria: sustained SLI breach or manual break-glass by director on-call', 'Feeds Knowledge Base answers on “when to roll back a 5% canary”'], artifacts: ['Artifact: rollback SOP v5', 'Artifact: escalation matrix'], people: ['K. Tan (Owner)', 'Platform on-call (Rotation)'], expert: 'K. Tan', date: 'In progress' },
+  experiment: { title: 'A/B experiment layer', type: 'Product analytics', items: ['Assignment via experimentation SDK; holdout for long-term reads', 'Guardrail and OEC nodes both connect here in the knowledge graph', 'Used by PM + DS for ship / iterate decisions'], artifacts: ['Artifact: guardrail metric catalog', 'Project: Experiment reliability upgrade'], people: ['M. Okonkwo (Data Science)', 'J. Rivera (PM)'], expert: 'M. Okonkwo', date: 'Playbook' },
+  latency: { title: 'p99 latency', type: 'Signal · Performance', items: ['Tracked per region and device class; canary comparison must match dimensions', 'High closeness to other nodes in ops graphs → faster blast radius', 'Complements error-rate SLI for rollback triggers'], expert: 'K. Tan', date: 'Feb 2026' },
+  flag: { title: 'Feature flag', type: 'Control · Release', items: ['Kill switch independent of binary rollback for gradual exposure', 'Linked to PRD acceptance criteria in quarter-commit template', 'Tied to canary node for progressive delivery'], expert: 'S. Reeves', date: 'PRD template' },
+  prd: { title: 'PRD commit gate', type: 'Process · Product', items: ['Quarter-sized projects require metrics, non-goals, dependencies before eng estimate', 'This node connects rollout, experiments, and compliance sign-offs in the graph', 'S. Reeves Vera session is source of truth'], artifacts: ['Artifact: PRD checklist template', 'Project: Q3 roadmap dependency map'], people: ['S. Reeves (PM)', 'L. Park (Research)'], expert: 'S. Reeves', date: 'Validated' }
+};
+function showTwinGraphNode(id) {
+  const d = twinGraphNodeData[id];
+  if (!d) return;
+  const panel = document.getElementById('twinNodeDetail');
+  panel.classList.add('visible');
+  document.getElementById('twinNdTitle').textContent = d.title;
+  document.getElementById('twinNdType').textContent = d.type;
+  var artifactItems = (d.artifacts || []).map(function (a) {
+    return '<div class="nd-item" style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">📄</span><a href="#" onclick="event.preventDefault();showToast(\'Opening: ' + a.replace(/'/g,'') + '\')" style="color:var(--green);text-decoration:none;font-weight:600;font-size:12px">' + a + '</a></div>';
+  }).join('');
+  var peopleItems = (d.people || []).map(function (p) {
+    return '<div class="nd-item" style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">👤</span><span style="font-weight:600;font-size:12px;color:var(--text)">' + p + '</span><button class="tb-btn primary" style="margin-left:auto;padding:3px 10px;font-size:10px" onclick="event.stopPropagation();window.open(\'https://teams.microsoft.com\',\'_blank\');showToast(\'Opening Teams chat with ' + p.replace(/'/g,'') + '…\')">Connect</button></div>';
+  }).join('');
+  document.getElementById('twinNdItems').innerHTML = d.items.map(function (i) { return '<div class="nd-item">' + i + '</div>'; }).join('') + artifactItems + peopleItems;
+  document.getElementById('twinNdExpert').textContent = '● ' + d.expert;
+  document.getElementById('twinNdDate').textContent = d.date;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function filterTwinGraph(type) {
+  showToast('Graph filter: ' + type);
+}
+const employeeDeptPalette = {
+  Finance: '#b91c1c',
+  HR: '#f59e0b',
+  IT: '#3b82f6',
+  Sales: '#14b8a6',
+  Marketing: '#a21caf'
+};
+const employeeNetworkData = (function buildEmployeeNetwork() {
+  const depts = ['Finance', 'HR', 'IT', 'Sales', 'Marketing'];
+  const teams = ['Platform', 'Growth', 'Data', 'Security'];
+  const projects = ['Canary', 'Experimentation', 'Agent Evals', 'Data Quality'];
+  const criticalSeed = new Set([4, 11, 23, 34, 38]);
+  const nodes = Array.from({ length: 40 }, function (_, i) {
+    const angle = (i * 137.5) * Math.PI / 180;
+    const radius = 245 + ((i % 9) * 18);
+    const x = 490 + Math.cos(angle) * radius * 0.85 + ((i % 3) - 1) * 8;
+    const y = 430 + Math.sin(angle) * radius * 0.72 + (((i + 1) % 4) - 1.5) * 6;
+    return {
+      id: i,
+      label: 'Employee_' + i,
+      dept: depts[i % depts.length],
+      team: teams[i % teams.length],
+      project: projects[i % projects.length],
+      x: Math.max(60, Math.min(920, x)),
+      y: Math.max(70, Math.min(835, y))
+    };
+  });
+  const edgeSet = new Set();
+  function addEdge(a, b) {
+    if (a === b) return;
+    const k = a < b ? a + '-' + b : b + '-' + a;
+    edgeSet.add(k);
+  }
+  for (let i = 0; i < nodes.length; i++) {
+    addEdge(i, (i + 1) % nodes.length);
+    addEdge(i, (i + 7) % nodes.length);
+    addEdge(i, (i + 13) % nodes.length);
+    if (i % 2 === 0) addEdge(i, (i + 17) % nodes.length);
+    if (i % 5 === 0) addEdge(i, (i + 22) % nodes.length);
+  }
+  const edges = Array.from(edgeSet).map(function (k) {
+    const p = k.split('-').map(Number);
+    return { source: p[0], target: p[1] };
+  });
+  const degree = Array(nodes.length).fill(0);
+  edges.forEach(function (e) { degree[e.source]++; degree[e.target]++; });
+  nodes.forEach(function (n) {
+    const baseB = 0.08 + (degree[n.id] / 30) + ((n.id * 7) % 9) / 100;
+    n.betweenness = Math.min(0.58, +(baseB + (criticalSeed.has(n.id) ? 0.16 : 0)).toFixed(2));
+    n.degree = degree[n.id];
+    n.closeness = +(0.3 + degree[n.id] / 40).toFixed(2);
+    n.capture = n.id % 4 === 0 ? 0 : n.id % 4 === 1 ? 42 : n.id % 4 === 2 ? 68 : 88;
+    n.critical = n.degree >= 8 || n.betweenness >= 0.38;
+  });
+  return { nodes: nodes, edges: edges };
+})();
+let employeeNetworkView = { x: 0, y: 0, w: 980, h: 900 };
+let selectedEmployeeForRepo = null;
+let activeEmployeeFilters = { dept: 'all', team: 'all', project: 'all' };
+function showRiskMemoryNode(nodeId) {
+  const node = employeeNetworkData.nodes.find(function (n) { return n.id === nodeId; });
+  if (!node) return;
+  selectedEmployeeForRepo = node;
+  const panel = document.getElementById('riskNodeDetail');
+  panel.classList.add('visible');
+  document.getElementById('riskNdTitle').textContent = node.label;
+  document.getElementById('riskNdType').textContent = node.dept + ' · ' + (node.critical ? 'Critical employee' : 'Network participant');
+  document.getElementById('riskNdItems').innerHTML = [
+    'Degree centrality: ' + node.degree + ' direct dependencies.',
+    'Betweenness centrality: ' + node.betweenness.toFixed(2) + ' (bridge influence).',
+    'Knowledge capture status: ' + node.capture + '% documented.'
+  ].map(function (i) { return '<div class="nd-item">' + i + '</div>'; }).join('');
+  document.getElementById('riskNdOwner').textContent = 'Capture owner: Knowledge Capture Ops';
+  document.getElementById('riskNdScore').textContent = 'Degree ' + node.degree + ' · Betw. ' + node.betweenness.toFixed(2);
+  const repo = document.getElementById('riskNdRepo');
+  if (repo) repo.textContent = 'Open ' + node.label + ' knowledge repository';
+}
+function renderEmployeeNetwork() {
+  const svg = document.getElementById('employeeNetworkSvg');
+  if (!svg) return;
+  const ns = 'http://www.w3.org/2000/svg';
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', employeeNetworkView.x + ' ' + employeeNetworkView.y + ' ' + employeeNetworkView.w + ' ' + employeeNetworkView.h);
+  const filteredNodes = employeeNetworkData.nodes.filter(function (n) {
+    return (activeEmployeeFilters.dept === 'all' || n.dept === activeEmployeeFilters.dept) &&
+      (activeEmployeeFilters.team === 'all' || n.team === activeEmployeeFilters.team) &&
+      (activeEmployeeFilters.project === 'all' || n.project === activeEmployeeFilters.project);
+  });
+  const allowed = new Set(filteredNodes.map(function (n) { return n.id; }));
+  const filteredEdges = employeeNetworkData.edges.filter(function (e) { return allowed.has(e.source) && allowed.has(e.target); });
+  filteredEdges.forEach(function (e) {
+    const a = employeeNetworkData.nodes[e.source];
+    const b = employeeNetworkData.nodes[e.target];
+    const line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', a.x);
+    line.setAttribute('y1', a.y);
+    line.setAttribute('x2', b.x);
+    line.setAttribute('y2', b.y);
+    line.setAttribute('stroke', 'rgba(100,116,139,0.25)');
+    line.setAttribute('stroke-width', '1.4');
+    line.setAttribute('data-source', e.source);
+    line.setAttribute('data-target', e.target);
+    line.classList.add('emp-edge');
+    svg.appendChild(line);
+  });
+  filteredNodes.forEach(function (n) {
+    const g = document.createElementNS(ns, 'g');
+    g.style.cursor = 'pointer';
+    g.addEventListener('click', function () { focusEmployeeNode(n.id); });
+    const c = document.createElementNS(ns, 'circle');
+    c.setAttribute('cx', n.x);
+    c.setAttribute('cy', n.y);
+    c.setAttribute('r', 7 + Math.min(9, n.degree * 0.8));
+    c.setAttribute('fill', employeeDeptPalette[n.dept]);
+    c.setAttribute('stroke', n.critical ? '#dc2626' : 'rgba(255,255,255,0.75)');
+    c.setAttribute('stroke-width', n.critical ? '2.2' : '1.1');
+    g.appendChild(c);
+    const t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', n.x + 12);
+    t.setAttribute('y', n.y - 10);
+    t.setAttribute('font-size', '11');
+    t.setAttribute('fill', '#0f172a');
+    t.setAttribute('font-family', 'Inter, sans-serif');
+    t.textContent = n.label;
+    g.appendChild(t);
+    svg.appendChild(g);
+  });
+  const critical = filteredNodes
+    .filter(function (n) { return n.critical; })
+    .sort(function (a, b) { return (b.betweenness * 100 + b.degree) - (a.betweenness * 100 + a.degree); })
+    .slice(0, 8);
+  const tbody = document.getElementById('criticalEmployeesBody');
+  if (tbody) {
+    tbody.innerHTML = critical.map(function (n) {
+      const statusTag = n.capture < 40
+        ? '<span class="tag tag-red">Low (' + n.capture + '%)</span>'
+        : (n.capture < 70
+          ? '<span class="tag tag-amber">Partial (' + n.capture + '%)</span>'
+          : '<span class="tag tag-green">Good (' + n.capture + '%)</span>');
+      return '<tr onclick="focusEmployeeNode(' + n.id + ')" style="cursor:pointer">' +
+        '<td><button class="tb-btn" style="padding:4px 8px;font-size:11px">' + n.label + '</button></td>' +
+        '<td>' + n.dept + '</td><td class="mono">' + n.degree + '</td><td class="mono">' + n.betweenness.toFixed(2) + '</td><td>' + statusTag + '</td></tr>';
+    }).join('');
+    const captured = critical.filter(function (n) { return n.capture >= 70; }).length;
+    const capturePct = Math.round((captured / Math.max(1, critical.length)) * 100);
+    document.getElementById('kpiCriticalCount').textContent = String(critical.length);
+    document.getElementById('kpiCriticalCapture').textContent = capturePct + '%';
+    document.getElementById('kpiCriticalGap').textContent = (100 - capturePct) + '%';
+    document.getElementById('kpiCriticalCaptureBar').style.width = capturePct + '%';
+    document.getElementById('kpiCriticalGapBar').style.width = (100 - capturePct) + '%';
+  }
+}
+function setEmployeeNetworkViewBox(v) {
+  employeeNetworkView = v;
+  const svg = document.getElementById('employeeNetworkSvg');
+  if (svg) svg.setAttribute('viewBox', v.x + ' ' + v.y + ' ' + v.w + ' ' + v.h);
+}
+function zoomEmployeeNetwork(factor) {
+  const nextW = Math.max(220, Math.min(980, employeeNetworkView.w * factor));
+  const nextH = Math.max(220, Math.min(900, employeeNetworkView.h * factor));
+  const cx = employeeNetworkView.x + employeeNetworkView.w / 2;
+  const cy = employeeNetworkView.y + employeeNetworkView.h / 2;
+  setEmployeeNetworkViewBox({
+    x: Math.max(0, Math.min(980 - nextW, cx - nextW / 2)),
+    y: Math.max(0, Math.min(900 - nextH, cy - nextH / 2)),
+    w: nextW,
+    h: nextH
+  });
+}
+function resetEmployeeNetworkZoom() {
+  setEmployeeNetworkViewBox({ x: 0, y: 0, w: 980, h: 900 });
+  var svg = document.getElementById('employeeNetworkSvg');
+  if (svg) {
+    svg.querySelectorAll('.emp-edge').forEach(function (l) {
+      l.setAttribute('stroke', 'rgba(100,116,139,0.25)');
+      l.setAttribute('stroke-width', '1.4');
+      l.setAttribute('opacity', '1');
+    });
+    svg.querySelectorAll('circle').forEach(function (c) { c.setAttribute('opacity', '1'); });
+    svg.querySelectorAll('text').forEach(function (t) { t.setAttribute('opacity', '1'); });
+  }
+}
+function zoomToEmployee(nodeId) {
+  const node = employeeNetworkData.nodes.find(function (n) { return n.id === nodeId; });
+  if (!node) return;
+  const w = 300, h = 260;
+  setEmployeeNetworkViewBox({
+    x: Math.max(0, Math.min(980 - w, node.x - w / 2)),
+    y: Math.max(0, Math.min(900 - h, node.y - h / 2)),
+    w: w,
+    h: h
+  });
+}
+function focusEmployeeNode(nodeId) {
+  showRiskMemoryNode(nodeId);
+  zoomToEmployee(nodeId);
+  highlightEmployeeEdges(nodeId);
+}
+function highlightEmployeeEdges(nodeId) {
+  var svg = document.getElementById('employeeNetworkSvg');
+  if (!svg) return;
+  var edges = svg.querySelectorAll('.emp-edge');
+  var nid = String(nodeId);
+  edges.forEach(function (line) {
+    var src = line.getAttribute('data-source');
+    var tgt = line.getAttribute('data-target');
+    if (src === nid || tgt === nid) {
+      line.setAttribute('stroke', '#2563eb');
+      line.setAttribute('stroke-width', '3');
+      line.setAttribute('opacity', '1');
+    } else {
+      line.setAttribute('stroke', 'rgba(100,116,139,0.12)');
+      line.setAttribute('stroke-width', '1');
+      line.setAttribute('opacity', '0.4');
+    }
+  });
+  var circles = svg.querySelectorAll('circle');
+  circles.forEach(function (c) {
+    c.setAttribute('opacity', '0.35');
+  });
+  var connectedIds = new Set([nodeId]);
+  employeeNetworkData.edges.forEach(function (e) {
+    if (e.source === nodeId) connectedIds.add(e.target);
+    if (e.target === nodeId) connectedIds.add(e.source);
+  });
+  var groups = svg.querySelectorAll('g');
+  groups.forEach(function (g) {
+    var circ = g.querySelector('circle');
+    if (!circ) return;
+    var cx = parseFloat(circ.getAttribute('cx'));
+    var cy = parseFloat(circ.getAttribute('cy'));
+    var matchNode = employeeNetworkData.nodes.find(function (n) { return Math.abs(n.x - cx) < 1 && Math.abs(n.y - cy) < 1; });
+    if (matchNode && connectedIds.has(matchNode.id)) {
+      circ.setAttribute('opacity', '1');
+      var txt = g.querySelector('text');
+      if (txt) txt.setAttribute('opacity', '1');
+    } else {
+      var txt = g.querySelector('text');
+      if (txt) txt.setAttribute('opacity', '0.25');
+    }
+  });
+}
+function viewEmployeeInNetwork(nodeId, name) {
+  showScreen('graph');
+  setTimeout(function () {
+    focusEmployeeNode(nodeId);
+    showToast('Zoomed to ' + name + ' in Employee Network');
+  }, 200);
+}
+function openEmployeeKnowledgeBase() {
+  if (selectedEmployeeForRepo) {
+    showScreen('twin');
+    document.getElementById('twinInput').value = 'What knowledge is owned by ' + selectedEmployeeForRepo.label + '?';
+    showToast('Opening knowledge repository for ' + selectedEmployeeForRepo.label);
+  } else {
+    showScreen('twin');
+  }
+}
+const captureEmployeeFacts = {
+  'k. tan': { name: 'K. Tan', empId: 'Employee_4', initials: 'KT', avColor: 'av-red', designation: 'Staff SWE · Serving & Reliability', degree: 15, betw: 0.47, capture: 28, departments: ['IT', 'Sales'], risk: 89, topics: ['Canary rollback', 'Incident gating', 'SLI windows', 'Cohort slicing'], repo: '#repo-k-tan', networkNodeId: 4 },
+  'j. rivera': { name: 'J. Rivera', empId: 'Employee_11', initials: 'JR', avColor: 'av-amber', designation: 'Principal Product Manager', degree: 12, betw: 0.39, capture: 34, departments: ['Marketing', 'IT'], risk: 82, topics: ['Guardrail policy', 'PRD quality', 'Launch decisions', 'Experimentation'], repo: '#repo-j-rivera', networkNodeId: 11 },
+  'l. park': { name: 'L. Park', empId: 'Employee_23', initials: 'LP', avColor: 'av-blue', designation: 'Research Scientist · Agent Evals', degree: 9, betw: 0.31, capture: 44, departments: ['IT', 'Finance'], risk: 74, topics: ['Eval rubrics', 'Model release policy', 'Shadow traffic testing'], repo: '#repo-l-park', networkNodeId: 23 },
+  'm. okonkwo': { name: 'M. Okonkwo', empId: 'Employee_34', initials: 'MO', avColor: 'av-green', designation: 'Staff Data Scientist', degree: 13, betw: 0.29, capture: 84, departments: ['Data', 'Product'], risk: 36, topics: ['A/B framework', 'Metric interpretation', 'Quality scorecards', 'DQ incident triage'], repo: '#repo-m-okonkwo', networkNodeId: 34 },
+  's. reeves': { name: 'S. Reeves', empId: 'Employee_38', initials: 'SR', avColor: 'av-green', designation: 'Sr PM · Growth & Subscriptions', degree: 10, betw: 0.26, capture: 72, departments: ['Product', 'Marketing'], risk: 42, topics: ['PRD templates', 'Quarter commit gate', 'Roadmap planning'], repo: '#repo-s-reeves', networkNodeId: 38 },
+  'a. dubois': { name: 'A. Dubois', empId: 'Employee_7', initials: 'AD', avColor: 'av-amber', designation: 'TPM · Cross-org Execution', degree: 11, betw: 0.34, capture: 56, departments: ['IT', 'Sales', 'Product'], risk: 64, topics: ['Exec review process', 'Dependency mapping', 'QBR planning'], repo: '#repo-a-dubois', networkNodeId: 7 }
+};
+function searchKnowledgeCaptureEmployee() {
+  var q = (document.getElementById('captureSearchInput').value || '').trim().toLowerCase();
+  var res = document.getElementById('captureSearchResult');
+  if (!q) { res.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px 0">Type an employee name or ID (e.g. Employee_4) to search.</div>'; return; }
+  var key = Object.keys(captureEmployeeFacts).find(function (k) { return k.indexOf(q) !== -1 || q.indexOf(k) !== -1; });
+  if (!key) {
+    key = Object.keys(captureEmployeeFacts).find(function (k) { var e = captureEmployeeFacts[k]; return e.empId && e.empId.toLowerCase() === q; });
+  }
+  if (!key) { res.innerHTML = '<div style="padding:14px;background:var(--red-dim);border:1px solid rgba(220,38,38,0.15);border-radius:var(--r);color:var(--red);font-size:13px;font-weight:600">No employee match found. Try: K. Tan, J. Rivera, Employee_4, Employee_23, M. Okonkwo, S. Reeves</div>'; return; }
+  var e = captureEmployeeFacts[key];
+  var riskColor = e.risk >= 70 ? 'var(--red)' : e.risk >= 50 ? 'var(--amber)' : 'var(--success)';
+  var riskTag = e.risk >= 70 ? 'tag-red' : e.risk >= 50 ? 'tag-amber' : 'tag-green';
+  var captureColor = e.capture >= 70 ? 'pb-green' : e.capture >= 40 ? 'pb-amber' : 'pb-red';
+  var deptTags = e.departments.map(function (d) { return '<span class="tag tag-blue" style="font-size:10px;padding:3px 8px">' + d + '</span>'; }).join(' ');
+  var topicTags = e.topics.map(function (t) { return '<span class="tag tag-gray" style="font-size:10px;padding:3px 8px">' + t + '</span>'; }).join(' ');
+  res.innerHTML =
+    '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 22px;box-shadow:var(--shadow-card)">' +
+      '<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">' +
+        '<div class="person-av ' + e.avColor + '" style="width:48px;height:48px;font-size:15px">' + e.initials + '</div>' +
+        '<div style="flex:1"><div style="font-family:Syne,sans-serif;font-size:16px;font-weight:700;color:var(--text)">' + e.name + ' <span style="font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--text3);margin-left:4px">' + e.empId + '</span></div>' +
+        '<div style="font-size:13px;color:var(--text2);margin-top:2px">' + e.designation + '</div></div>' +
+        '<span class="tag ' + riskTag + '" style="font-size:11px">Risk ' + e.risk + '/100</span>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">' +
+        '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">' +
+          '<div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums">' + e.degree + '</div>' +
+          '<div style="font-size:11px;color:var(--text3);margin-top:2px">Degree centrality</div></div>' +
+        '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">' +
+          '<div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums">' + e.betw.toFixed(2) + '</div>' +
+          '<div style="font-size:11px;color:var(--text3);margin-top:2px">Betweenness</div></div>' +
+        '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">' +
+          '<div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:' + riskColor + ';font-variant-numeric:tabular-nums">' + e.capture + '%</div>' +
+          '<div style="font-size:11px;color:var(--text3);margin-top:2px">Knowledge capture</div></div>' +
+      '</div>' +
+      '<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">Capture progress</div>' +
+        '<div class="prog-wrap" style="height:10px"><div class="prog-bar ' + captureColor + '" style="width:' + e.capture + '%"></div></div></div>' +
+      '<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">Connected departments</div>' + deptTags + '</div>' +
+      '<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">Owned knowledge topics</div>' + topicTags + '</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+        '<button class="tb-btn primary" style="padding:8px 16px;font-size:12px" onclick="showScreen(\'twin\');showToast(\'Opening knowledge repository for ' + e.name + '\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Open Knowledge Repository</button>' +
+        '<button class="tb-btn" style="padding:8px 16px;font-size:12px" onclick="viewEmployeeInNetwork(' + e.networkNodeId + ',\'' + e.name + '\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="14"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="14" x2="5" y2="16"/><line x1="12" y1="14" x2="19" y2="16"/></svg>View in Network</button>' +
+        '<button class="tb-btn" style="padding:8px 16px;font-size:12px" onclick="showScreen(\'vera\');showToast(\'Starting Vera session for ' + e.name + '\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>Start Capture Session</button>' +
+      '</div>' +
+    '</div>';
+}
+function filterRiskNetwork(type) {
+  const labels = {
+    weighted: 'Using weighted dependency view',
+    betweenness: 'Highlighting highest-betweenness employees',
+    workflows: 'Highlighting workflow-critical dependencies',
+    artifacts: 'Highlighting low-capture knowledge paths',
+    all: 'Showing full employee network'
+  };
+  showToast(labels[type] || ('Filter: ' + type));
+}
+renderEmployeeNetwork();
+
+// ─── KNOWLEDGE BASE ───
+const twinAnswers = {
+  'How should we interpret a flat A/B lift when guardrail metrics moved?': {
+    summary: 'A flat primary lift with moving guardrails usually means the test is under-powered for harm, assignment is leaky, or you are trading off against a constrained cohort — not “no effect.”',
+    keyPoints: [
+      'Re-check power: with typical consumer-scale traffic, small regressions on engagement or trust signals can hide inside wide CIs on the north star.',
+      'Segment by platform, locale, and new vs returning users; Meta-style feed experiments often show divergent guardrails before the headline moves.',
+      'If guardrails violate pre-registered thresholds, treat as stop or iterate even when the OEC is neutral — document the decision in the experiment diary.'
+    ],
+    context: 'Neutral treatment effect on the primary metric while secondary or guardrail metrics shift is common when the change reallocates behaviour rather than adding net new activity. Data analytics teams at large product companies typically require a written harm review when any guardrail crosses its boundary, independent of significance on the launch metric. Compare to pre-period variance and to a holdout slice to rule out instrumentation drift.',
+    links: [
+      { type: 'video', title: 'Vera session — Guardrails when the OEC is flat', sub: 'M. Okonkwo · Experimentation forum · 38 min', href: '#video-guardrails-flat-oec' },
+      { type: 'artifact', title: 'Template: Experiment decision log (Apple-scale privacy cohorts)', sub: 'Notion · DS playbook', href: '#artifact-exp-decision-log' },
+      { type: 'project', title: 'Project: Global A/B metric dictionary v3', sub: 'Shared with PM + eng · 40+ definitions', href: '#project-metric-dictionary' }
+    ],
+    people: [
+      { name: 'M. Okonkwo', initials: 'MO', role: 'Staff DS · Experimentation', color: 'av-green' },
+      { name: 'J. Rivera', initials: 'JR', role: 'Principal PM · Metrics', color: 'av-amber' }
+    ],
+    graphHighlight: ['experiment', 'guardrail', 'canary'],
+    graphNodes: [
+      { id: 'ab-lift', label: 'A/B lift', center: true },
+      { id: 'guardrail', label: 'Guardrail metrics' },
+      { id: 'experiment', label: 'Experiment SDK' },
+      { id: 'oec', label: 'OEC / north star' },
+      { id: 'power', label: 'Power analysis' },
+      { id: 'cohort', label: 'Cohort slicing' }
+    ],
+    conf: 4, source: 'M. Okonkwo · Staff DS · Vera session Feb 2026', date: 'High confidence'
+  },
+  'What must be in the PRD before eng scopes a quarter-sized project?': {
+    summary: 'Before eng commits headcount for a quarter, the PRD needs a sharp problem statement, measurable outcomes, explicit non-goals, and a thin slice for MVP — not just mockups.',
+    keyPoints: [
+      'Define success metrics and counter-metrics up front; Google-style OKR alignment should map 1:1 to measurable signals, not “improve quality.”',
+      'List dependencies (infra, legal, design systems) and which director-level sponsor owns trade-offs — program managers use this to lock dates.',
+      'Attach user evidence (research IDs, support volume) and open questions; eng should see what is unknown, not guess scope in grooming.'
+    ],
+    context: 'Product managers at firms like Apple and Meta use the PRD as the contract for sequencing: if discovery, analytics contracts, or policy review are still open, the doc should say “phase 0” and block quarter commit. A quarter-sized project implies cross-functional capacity; the PRD should name the TPM or eng lead as DRI for delivery and include a cut list if the quarter slips.',
+    links: [
+      { type: 'video', title: 'Workshop clip — PRD readiness bar for eng estimate', sub: 'S. Reeves · PM staff meeting', href: '#video-prd-readiness' },
+      { type: 'artifact', title: 'PRD checklist: quarter commit gate', sub: 'Google Docs template · Product ops', href: '#artifact-prd-gate' },
+      { type: 'project', title: 'Project: H2 roadmap — subscriptions platform', sub: 'Jira epic tree + Figma', href: '#project-subs-roadmap' }
+    ],
+    people: [
+      { name: 'S. Reeves', initials: 'SR', role: 'Sr PM · Growth & subscriptions', color: 'av-green' },
+      { name: 'A. Dubois', initials: 'AD', role: 'TPM · Cross-org execution', color: 'av-amber' }
+    ],
+    graphHighlight: ['prd', 'experiment', 'flag'],
+    graphNodes: [
+      { id: 'prd', label: 'PRD', center: true },
+      { id: 'eng-scope', label: 'Eng scoping' },
+      { id: 'okr', label: 'OKR alignment' },
+      { id: 'non-goals', label: 'Non-goals' },
+      { id: 'cut-list', label: 'Cut list' },
+      { id: 'dependencies', label: 'Dependencies' }
+    ],
+    conf: 5, source: 'S. Reeves · Sr PM · Validated with eng leads', date: 'Verified playbook'
+  },
+  'What are our rollback criteria for a 5% canary rollout?': {
+    summary: 'At 5% canary, roll back on sustained error-budget burn, SLO regression past the agreed delta, or any Sev-2 customer symptom — even if p99 latency looks “fine” on aggregate.',
+    keyPoints: [
+      'Compare canary to baseline using the same cohort dimensions; Apple-scale clients often spike errors only on older OS versions.',
+      'Automate rollback on red SLI for N consecutive windows (e.g. 3×5m); Meta-style fleets avoid “eyeballing” graphs at 2 a.m.',
+      'If the change touches model serving, include quality evals: OpenAI-style orgs gate on offline + shadow traffic thresholds before widening.'
+    ],
+    context: 'Software developers own the binary decision during canary: predefined thresholds beat debate in Slack. Typical pattern is error rate Δ > X bp, availability Δ > Y, or manual break-glass by the on-call. Document the rollback command and owner in the launch ticket so program managers can report status without paging the wrong team.',
+    links: [
+      { type: 'video', title: 'Post-incident — Canary rollback timeline (serving)', sub: 'K. Tan · Indexed Vera capture', href: '#video-canary-rollback' },
+      { type: 'artifact', title: 'Runbook: 5% → 25% → 100% with SLI table', sub: 'Markdown · Infra wiki', href: '#artifact-canary-runbook' },
+      { type: 'project', title: 'Project: Safe launch dashboard (Datadog + internal)', sub: 'Used by SWE + TPM', href: '#project-safe-launch' }
+    ],
+    people: [
+      { name: 'K. Tan', initials: 'KT', role: 'Staff SWE · Serving & canary', color: 'av-red' },
+      { name: 'L. Park', initials: 'LP', role: 'Research Scientist · Agent evals', color: 'av-blue' }
+    ],
+    graphHighlight: ['canary', 'rollback', 'incident', 'sli'],
+    graphNodes: [
+      { id: 'canary', label: 'Canary 5%', center: true },
+      { id: 'rollback', label: 'Rollback' },
+      { id: 'sli', label: 'SLI / SLO' },
+      { id: 'error-budget', label: 'Error budget' },
+      { id: 'baseline', label: 'Baseline cohort' },
+      { id: 'model-serving', label: 'Model serving' }
+    ],
+    conf: 4, source: 'K. Tan · SWE · Session in progress', date: 'High — partial validation'
+  },
+  'How do we run a cross-org exec review for a hard dependency?': {
+    summary: 'Package a one-pager with decision, date, cost of delay, and three options; exec review is for commitment, not discovery — TPM drives pre-wired alignment with each pillar lead.',
+    keyPoints: [
+      'Send pre-reads 48h early with explicit asks (headcount, priority bump, policy exception); Google and Meta forums collapse without named decisions.',
+      'Surface the dependency graph: who blocks whom, which OKRs trade off; program managers track “ready to commit” vs “needs data.”',
+      'Capture outcomes in a decision record (ADR-style) so PM and eng do not re-litigate the same meeting next quarter.'
+    ],
+    context: 'Cross-org exec reviews fail when analytics has not signed off on impact sizing or legal has not seen the user-facing copy. TPMs schedule dry-runs with each org’s delegate, then use the exec slot to remove single-threaded blockers. For consumer hardware–adjacent software (Apple-like), add supply or release-train constraints to the same page.',
+    links: [
+      { type: 'video', title: 'Vera — Exec review dry-run (redacted)', sub: 'A. Dubois · TPM craft talk', href: '#video-exec-dryrun' },
+      { type: 'artifact', title: 'One-pager template: cross-org dependency', sub: 'Slides + Loom link', href: '#artifact-exec-onepager' },
+      { type: 'project', title: 'Project: ML platform QBR dependencies', sub: 'Sheets + Asana milestones', href: '#project-ml-qbr' }
+    ],
+    people: [
+      { name: 'A. Dubois', initials: 'AD', role: 'TPM · Cross-org execution', color: 'av-amber' },
+      { name: 'S. Reeves', initials: 'SR', role: 'Sr PM · Roadmap planning', color: 'av-green' }
+    ],
+    graphHighlight: ['prd', 'experiment', 'canary'],
+    graphNodes: [
+      { id: 'exec-review', label: 'Exec review', center: true },
+      { id: 'one-pager', label: 'One-pager' },
+      { id: 'dependency', label: 'Dependency graph' },
+      { id: 'pre-read', label: 'Pre-reads' },
+      { id: 'adr', label: 'Decision record' },
+      { id: 'tpm', label: 'TPM dry-run' }
+    ],
+    conf: 3, source: 'A. Dubois · TPM · Pending full validation', date: 'Good — needs second expert'
+  },
+  'When should analytics file a data quality incident vs patch the pipeline?': {
+    summary: 'File an incident when downstream decisions, experiments, or financial reporting could consume bad data at scale; patch quietly when blast radius is contained and you have owner + test coverage.',
+    keyPoints: [
+      'If a broken dbt model or Airflow task feeds exec dashboards or experiment assignment, open an incident and pin artifact versions — same bar as a prod Sev-2.',
+      'For a dev sandbox or a single ad-hoc notebook, fix forward with a PR and backfill note; notify stakeholders in the data Slack channel.',
+      'When in doubt, ask: “Would Meta or Google data governance require a retro?” If yes, file and tag the TPM for comms.'
+    ],
+    context: 'Data analytics teams separate “data defect” from “code bug”: incidents get an incident commander, customer comms template, and postmortem. Silent patches are for low-risk schema typos with automated tests added. OpenAI-scale ML teams extend this to training data cuts: any change that affects model cards or eval harnesses should be incident-class.',
+    links: [
+      { type: 'video', title: 'Brown bag — Incident vs hotfix (data platform)', sub: 'M. Okonkwo + platform eng', href: '#video-dq-incident' },
+      { type: 'artifact', title: 'Decision tree: DQ severity rubric', sub: 'Confluence · Data council', href: '#artifact-dq-rubric' },
+      { type: 'project', title: 'Project: Lineage map — core fact tables', sub: 'Collibra / internal', href: '#project-lineage-core' }
+    ],
+    people: [
+      { name: 'M. Okonkwo', initials: 'MO', role: 'Staff DS · Data platform', color: 'av-green' },
+      { name: 'K. Tan', initials: 'KT', role: 'Staff SWE · Pipeline infra', color: 'av-red' }
+    ],
+    graphHighlight: ['experiment', 'guardrail', 'sli'],
+    graphNodes: [
+      { id: 'dq-incident', label: 'DQ incident', center: true },
+      { id: 'pipeline', label: 'Pipeline patch' },
+      { id: 'dbt', label: 'dbt / Airflow' },
+      { id: 'blast-radius', label: 'Blast radius' },
+      { id: 'stakeholders', label: 'Stakeholders' },
+      { id: 'postmortem', label: 'Postmortem' }
+    ],
+    conf: 4, source: 'M. Okonkwo · Staff DS · Data council notes', date: 'High confidence'
+  }
+};
+const queryHistoryItems = [];
+function twinEsc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function twinFindEntry(question) {
+  const trimmed = question.trim();
+  if (twinAnswers[trimmed]) return { entry: twinAnswers[trimmed], matchKind: 'exact' };
+  const ql = trimmed.toLowerCase();
+  let bestKey = null;
+  let bestScore = 0;
+  for (const key of Object.keys(twinAnswers)) {
+    const words = key.toLowerCase().split(/\W+/).filter(function (w) { return w.length > 2; });
+    const score = words.reduce(function (s, w) { return s + (ql.indexOf(w) !== -1 ? 1 : 0); }, 0);
+    if (score > bestScore) {
+      bestScore = score;
+      bestKey = key;
+    }
+  }
+  if (bestKey && bestScore >= 1) return { entry: twinAnswers[bestKey], matchKind: 'keyword' };
+  const keys = Object.keys(twinAnswers);
+  return { entry: twinAnswers[keys[Math.floor(Math.random() * keys.length)]], matchKind: 'fallback' };
+}
+function twinBuildStructuredHtml(ans) {
+  const bullets = (ans.keyPoints || []).map(function (t) { return '<li>' + twinEsc(t) + '</li>'; }).join('');
+  var allLinks = (ans.links || []).map(function (L) {
+    var ico = L.type === 'video' ? '▶' : L.type === 'project' ? '📁' : '📄';
+    var typeLbl = L.type === 'video' ? 'Video' : L.type === 'project' ? 'Project' : 'Document';
+    var owner = twinEsc((L.sub || '').split('·')[0].trim());
+    var href = twinEsc(L.href || '#');
+    var title = twinEsc(L.title);
+    var sub = twinEsc(L.sub || '');
+    return '<a class="tr-rel-link" href="' + href + '" onclick="event.preventDefault();showTwinResourceOpen(this)" style="display:flex;align-items:center;gap:12px;text-decoration:none;padding:10px 14px;border-radius:var(--r);border:1px solid var(--border2);background:var(--bg4);transition:all .18s">' +
+      '<span style="font-size:20px;flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border)">' + ico + '</span>' +
+      '<span style="flex:1;min-width:0"><div style="font-family:Syne,sans-serif;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + title + '</div>' +
+      '<div style="font-size:11px;color:var(--text3);margin-top:2px">' + sub + '</div></span>' +
+      '<span class="tag tag-gray" style="flex-shrink:0;font-size:10px">' + typeLbl + '</span></a>';
+  }).join('');
+  var peopleHtml = (ans.people || []).map(function (p) {
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">' +
+      '<div class="person-av ' + p.color + '" style="width:32px;height:32px;font-size:11px">' + twinEsc(p.initials) + '</div>' +
+      '<div style="flex:1;min-width:0"><div style="font-family:Syne,sans-serif;font-size:13px;font-weight:600;color:var(--text)">' + twinEsc(p.name) + '</div>' +
+      '<div style="font-size:11px;color:var(--text3)">' + twinEsc(p.role) + '</div></div>' +
+      '<button class="tb-btn primary" style="padding:5px 12px;font-size:11px;white-space:nowrap" onclick="event.stopPropagation();window.open(\'https://teams.microsoft.com/l/chat/0/0?users=' + encodeURIComponent(p.name) + '\',\'_blank\');showToast(\'Opening Teams chat with ' + twinEsc(p.name) + '…\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Connect</button></div>';
+  }).join('');
+  var html = '';
+  if (allLinks) html += '<div class="tr-section"><div class="tr-section-title">Key Artifacts &amp; Owner</div><div style="display:flex;flex-direction:column;gap:8px">' + allLinks + '</div></div>';
+  if (peopleHtml) html += '<div class="tr-section"><div class="tr-section-title">Knowledge Owners</div><div>' + peopleHtml + '</div></div>';
+  html += '<div class="tr-section"><div class="tr-section-title">Summary</div><p class="tr-summary">' + twinEsc(ans.summary || '') + '</p></div>';
+  if (bullets) html += '<div class="tr-section"><div class="tr-section-title">Key points</div><ul class="tr-bullets">' + bullets + '</ul></div>';
+  if (ans.context) html += '<div class="tr-section"><div class="tr-section-title">Additional context</div><p class="tr-context">' + twinEsc(ans.context) + '</p></div>';
+  return html;
+}
+function showTwinResourceOpen(el) {
+  const t = el.querySelector('.tr-rel-title');
+  showToast('Opening: ' + (t ? t.textContent : 'resource'));
+}
+function setAndQuery(q) {
+  document.getElementById('twinInput').value = q;
+  queryTwin();
+}
+function queryTwin() {
+  const q = document.getElementById('twinInput').value.trim();
+  if (!q) return;
+  const result = document.getElementById('twinResult');
+  result.classList.remove('visible');
+  setTimeout(function () {
+    const found = twinFindEntry(q);
+    const ans = found.entry;
+    const noteEl = document.getElementById('twinMatchNote');
+    if (found.matchKind === 'keyword') {
+      noteEl.style.display = 'block';
+      noteEl.className = 'tr-match-note';
+      noteEl.textContent = 'Matched from keywords in your question — structured answer, videos, and artifacts below align with this topic.';
+    } else if (found.matchKind === 'fallback') {
+      noteEl.style.display = 'block';
+      noteEl.className = 'tr-match-note';
+      noteEl.textContent = 'No strong keyword overlap — showing a sample answer. Try suggested questions or terms like canary, PRD, experiment, guardrail, TPM, or data quality.';
+    } else {
+      noteEl.style.display = 'none';
+      noteEl.textContent = '';
+    }
+    document.getElementById('trQuestion').textContent = q;
+    document.getElementById('twinStructured').innerHTML = twinBuildStructuredHtml(ans);
+    const dots = document.getElementById('confDots');
+    dots.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+      const d = document.createElement('div');
+      d.className = 'conf-dot ' + (i < ans.conf ? 'conf-filled' : 'conf-empty');
+      dots.appendChild(d);
+    }
+    document.getElementById('trSource').textContent = '● ' + ans.source;
+    document.getElementById('trDate').textContent = ans.date;
+    result.classList.add('visible');
+    addToHistory(q, ans.conf);
+    buildDynamicKBGraph(ans.graphNodes || []);
+  }, 600);
+}
+function buildDynamicKBGraph(graphNodes) {
+  var svg = document.getElementById('twinGraphSvg');
+  if (!svg) return;
+  var ns = 'http://www.w3.org/2000/svg';
+  svg.innerHTML = '';
+  if (!graphNodes || graphNodes.length === 0) {
+    var placeholder = document.createElementNS(ns, 'text');
+    placeholder.setAttribute('x', '350'); placeholder.setAttribute('y', '200');
+    placeholder.setAttribute('text-anchor', 'middle'); placeholder.setAttribute('fill', 'var(--text3)');
+    placeholder.setAttribute('font-size', '12'); placeholder.setAttribute('font-family', 'Inter,sans-serif');
+    placeholder.textContent = 'Ask a question to see the knowledge graph';
+    svg.appendChild(placeholder);
+    return;
+  }
+  var cx = 350, cy = 200;
+  var nodeColors = ['#2563eb', '#dc2626', '#d97706', '#059669', '#a21caf', '#0891b2'];
+  var positions = [];
+  graphNodes.forEach(function (n, i) {
+    if (n.center) { positions.push({ x: cx, y: cy }); }
+    else {
+      var angle = ((i - 1) * (2 * Math.PI / (graphNodes.length - 1))) - Math.PI / 2;
+      positions.push({ x: cx + Math.cos(angle) * 145, y: cy + Math.sin(angle) * 130 });
+    }
+  });
+  var centerIdx = graphNodes.findIndex(function (n) { return n.center; });
+  if (centerIdx === -1) centerIdx = 0;
+  graphNodes.forEach(function (n, i) {
+    if (i === centerIdx) return;
+    var line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', positions[centerIdx].x); line.setAttribute('y1', positions[centerIdx].y);
+    line.setAttribute('x2', positions[i].x); line.setAttribute('y2', positions[i].y);
+    line.setAttribute('stroke', 'rgba(37,99,235,0.2)'); line.setAttribute('stroke-width', '2');
+    line.setAttribute('stroke-dasharray', ''); 
+    svg.appendChild(line);
+  });
+  for (var i = 1; i < graphNodes.length; i++) {
+    var next = (i % (graphNodes.length - 1)) + 1;
+    if (next === i || graphNodes[i].center || graphNodes[next].center) continue;
+    if (i < next && Math.abs(i - next) <= 2) {
+      var sl = document.createElementNS(ns, 'line');
+      sl.setAttribute('x1', positions[i].x); sl.setAttribute('y1', positions[i].y);
+      sl.setAttribute('x2', positions[next].x); sl.setAttribute('y2', positions[next].y);
+      sl.setAttribute('stroke', 'rgba(15,23,42,0.08)'); sl.setAttribute('stroke-width', '1.2');
+      svg.appendChild(sl);
+    }
+  }
+  graphNodes.forEach(function (n, i) {
+    var px = positions[i].x, py = positions[i].y;
+    var r = n.center ? 32 : 22;
+    var color = n.center ? '#2563eb' : nodeColors[(i) % nodeColors.length];
+    var fillBg = n.center ? '#eff6ff' : 'rgba(255,255,255,0.95)';
+    var g = document.createElementNS(ns, 'g');
+    g.style.cursor = 'pointer';
+    g.setAttribute('class', 'graph-node');
+    var circle = document.createElementNS(ns, 'circle');
+    circle.setAttribute('cx', px); circle.setAttribute('cy', py); circle.setAttribute('r', r);
+    circle.setAttribute('fill', fillBg); circle.setAttribute('stroke', color); circle.setAttribute('stroke-width', n.center ? '3' : '2');
+    g.appendChild(circle);
+    var words = n.label.split(' ');
+    if (words.length <= 2) {
+      words.forEach(function (w, wi) {
+        var txt = document.createElementNS(ns, 'text');
+        txt.setAttribute('x', px); txt.setAttribute('y', py - 4 + wi * 12);
+        txt.setAttribute('text-anchor', 'middle'); txt.setAttribute('fill', color);
+        txt.setAttribute('font-size', n.center ? '10' : '9'); txt.setAttribute('font-family', 'Syne');
+        txt.setAttribute('font-weight', '600'); txt.textContent = w;
+        g.appendChild(txt);
+      });
+    } else {
+      var txt = document.createElementNS(ns, 'text');
+      txt.setAttribute('x', px); txt.setAttribute('y', py + 3);
+      txt.setAttribute('text-anchor', 'middle'); txt.setAttribute('fill', color);
+      txt.setAttribute('font-size', n.center ? '9' : '8'); txt.setAttribute('font-family', 'Syne');
+      txt.setAttribute('font-weight', '600'); txt.textContent = n.label;
+      g.appendChild(txt);
+    }
+    svg.appendChild(g);
+  });
+}
+function addToHistory(q, conf) {
+  queryHistoryItems.unshift({ q, conf });
+  const h = document.getElementById('queryHistory');
+  h.innerHTML = queryHistoryItems.slice(0, 8).map(item => `
+    <div style="padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;font-size:12px" onclick="setAndQuery('${item.q.replace(/'/g,"\\'")}')">
+      <div style="color:var(--text2);margin-bottom:2px;font-family:'Syne',sans-serif">${item.q.length > 55 ? item.q.slice(0,55)+'…' : item.q}</div>
+      <div style="display:flex;gap:4px">${Array(5).fill(0).map((_,i)=>`<div style="width:6px;height:6px;border-radius:2px;background:${i<item.conf?'var(--green)':'var(--surface2)'}"></div>`).join('')}</div>
+    </div>`).join('');
+}
+
+// ─── SESSION TIMER ───
+let sessionSeconds = 18 * 60 + 43;
+setInterval(() => {
+  sessionSeconds++;
+  const m = String(Math.floor(sessionSeconds / 60)).padStart(2, '0');
+  const s = String(sessionSeconds % 60).padStart(2, '0');
+  const el = document.getElementById('sessionTimer');
+  if (el) el.textContent = '00:' + m + ':' + s;
+}, 1000);
+
+// ─── VIDEO CONTROLS STATE ───
+const ctrlState = { mic: true, cam: true, record: true, screen: false, transcript: false };
+function toggleCtrl(type) {
+  ctrlState[type] = !ctrlState[type];
+  if (type === 'mic') {
+    const btn = document.getElementById('btnMic');
+    if (btn) btn.classList.toggle('muted', !ctrlState.mic);
+    showToast(ctrlState.mic ? 'Microphone on' : 'Microphone muted');
+    animateWaveform(ctrlState.mic);
+  }
+  if (type === 'cam') {
+    const btn = document.getElementById('btnCam');
+    if (btn) btn.classList.toggle('muted', !ctrlState.cam);
+    showToast(ctrlState.cam ? 'Camera on' : 'Camera off');
+  }
+  if (type === 'record') {
+    const btn = document.getElementById('btnRecord');
+    if (btn) btn.classList.toggle('active-green', ctrlState.record);
+    const dot = document.getElementById('recDot');
+    if (dot) dot.style.animationPlayState = ctrlState.record ? 'running' : 'paused';
+    showToast(ctrlState.record ? 'Recording resumed' : 'Recording paused');
+  }
+  if (type === 'screen') {
+    const btn = document.getElementById('btnScreen');
+    if (btn) btn.classList.toggle('active-green', ctrlState.screen);
+    showToast(ctrlState.screen ? 'Screen sharing started' : 'Screen sharing stopped');
+  }
+  if (type === 'transcript') {
+    const panel = document.getElementById('transcriptPanel');
+    if (panel) panel.style.display = ctrlState.transcript ? 'block' : 'none';
+  }
+}
+
+// ─── WAVEFORM BAR ANIMATION ───
+let waveInterval = null;
+function animateWaveform(active) {
+  const bars = document.querySelectorAll('.waveBar');
+  if (!active) {
+    bars.forEach(b => b.style.height = '2px');
+    if (waveInterval) clearInterval(waveInterval);
+    return;
+  }
+  if (waveInterval) clearInterval(waveInterval);
+  waveInterval = setInterval(() => {
+    bars.forEach(b => {
+      const h = Math.floor(Math.random() * 14) + 2;
+      b.style.height = h + 'px';
+    });
+  }, 100);
+}
+
+// Start waveform when navigating to Vera screen
+const _origShowScreen = showScreen;
+showScreen = function(id) {
+  _origShowScreen(id);
+  if (id === 'vera') setTimeout(() => animateWaveform(true), 100);
+};
+animateWaveform(true);
+
+// ─── MODE SWITCH (text / voice) ───
+let voiceActive = false;
+let recognition = null;
+let waveAnimFrame = null;
+
+function switchMode(mode) {
+  const textMode = document.getElementById('mode-text');
+  const voiceMode = document.getElementById('mode-voice');
+  const tabText = document.getElementById('tab-text');
+  const tabVoice = document.getElementById('tab-voice');
+  if (!textMode || !voiceMode) return;
+  if (mode === 'text') {
+    textMode.style.display = 'flex';
+    voiceMode.style.display = 'none';
+    if (tabText) tabText.classList.add('active');
+    if (tabVoice) tabVoice.classList.remove('active');
+    if (voiceActive) stopVoice();
+  } else {
+    textMode.style.display = 'none';
+    voiceMode.style.display = 'flex';
+    if (tabVoice) tabVoice.classList.add('active');
+    if (tabText) tabText.classList.remove('active');
+    drawIdleWave();
+  }
+}
+
+function setVeraStatus(text, speaking) {
+  const el = document.getElementById('veraStatus');
+  if (el) el.textContent = text;
+  const ring = document.getElementById('veraRing');
+  if (ring) ring.style.borderColor = speaking ? 'rgba(255,255,255,0.95)' : 'rgba(37,99,235,0)';
+}
+
+// ─── CANVAS WAVEFORM ───
+function drawIdleWave() {
+  const canvas = document.getElementById('waveCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let t = 0;
+  function frame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    const amp = voiceActive ? 16 : 3;
+    for (let x = 0; x < canvas.width; x++) {
+      const y = canvas.height / 2
+        + Math.sin((x / 30) + t) * amp
+        + Math.sin((x / 15) + t * 1.3) * (amp * 0.4);
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = voiceActive ? 'rgba(37,99,235,0.85)' : 'rgba(37,99,235,0.2)';
+    ctx.lineWidth = voiceActive ? 2.5 : 1.5;
+    ctx.stroke();
+    t += voiceActive ? 0.09 : 0.018;
+    waveAnimFrame = requestAnimationFrame(frame);
+  }
+  if (waveAnimFrame) cancelAnimationFrame(waveAnimFrame);
+  frame();
+}
+
+// ─── VOICE CAPTURE ───
+function toggleVoice() {
+  if (voiceActive) stopVoice();
+  else startVoice();
+}
+
+function startVoice() {
+  voiceActive = true;
+  const orb = document.getElementById('micOrb');
+  const icon = document.getElementById('micIcon');
+  const label = document.getElementById('voiceStateLabel');
+  const sub = document.getElementById('voiceSubLabel');
+  const liveDiv = document.getElementById('voiceTranscriptLive');
+  if (orb) { orb.style.background = 'rgba(37,99,235,0.1)'; orb.style.borderColor = 'rgba(37,99,235,0.45)'; }
+  if (icon) icon.setAttribute('stroke', 'var(--green)');
+  if (label) label.textContent = 'Listening…';
+  if (sub) sub.textContent = 'Speak your answer — Vera is capturing';
+  if (liveDiv) liveDiv.style.display = 'block';
+  setVeraStatus('Expert speaking…', false);
+
+  // Real speech recognition if available
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-IN';
+    let finalText = '';
+    recognition.onresult = (e) => {
+      let interim = '';
+      finalText = '';
+      for (let i = 0; i < e.results.length; i++) {
+        if (e.results[i].isFinal) finalText += e.results[i][0].transcript;
+        else interim += e.results[i][0].transcript;
+      }
+      if (liveDiv) liveDiv.innerHTML = '<span style="color:var(--text)">' + finalText + '</span><span style="color:var(--text3)">' + interim + '</span>';
+      const lt = document.getElementById('liveTranscript');
+      if (lt) lt.innerHTML = (finalText + interim).slice(-200) + '<span style="color:var(--text3)"> |</span>';
+    };
+    recognition.onend = () => {
+      if (finalText.trim().length > 20) {
+        setTimeout(() => { sendVeraVoice(finalText.trim()); stopVoice(); }, 500);
+      }
+    };
+    recognition.onerror = () => simulateSpeech(liveDiv);
+    recognition.start();
+  } else {
+    simulateSpeech(liveDiv);
+  }
+}
+
+function simulateSpeech(liveDiv) {
+  const demoText = "We must not go below 2.5 reflux ratio — that is the absolute minimum. Below that, the product spec at the top cannot be maintained. If 20 minutes pass without stabilisation, we cut feed rate by 15 percent via the F-101 controller.";
+  let i = 0;
+  const iv = setInterval(() => {
+    i += 4;
+    if (liveDiv) liveDiv.textContent = demoText.slice(0, i);
+    if (i >= demoText.length) {
+      clearInterval(iv);
+      setTimeout(() => { sendVeraVoice(demoText); stopVoice(); }, 700);
+    }
+  }, 30);
+}
+
+function stopVoice() {
+  voiceActive = false;
+  if (recognition) { try { recognition.stop(); } catch(e){} recognition = null; }
+  const orb = document.getElementById('micOrb');
+  const icon = document.getElementById('micIcon');
+  const label = document.getElementById('voiceStateLabel');
+  const sub = document.getElementById('voiceSubLabel');
+  const liveDiv = document.getElementById('voiceTranscriptLive');
+  if (orb) { orb.style.background = 'var(--bg4)'; orb.style.borderColor = 'var(--border2)'; }
+  if (icon) icon.setAttribute('stroke', 'var(--text2)');
+  if (label) label.textContent = 'Tap to speak';
+  if (sub) sub.textContent = 'Vera is waiting for your response';
+  if (liveDiv) { liveDiv.style.display = 'none'; liveDiv.textContent = ''; }
+  setVeraStatus('Listening…', false);
+}
+
+function sendVeraVoice(text) {
+  const input = document.getElementById('veraInput');
+  if (input) input.value = text;
+  switchMode('text');
+  setTimeout(() => sendVeraMsg(), 200);
+}
+
+function endSession() {
+  showToast('Session saved — entities added to org knowledge graph and Knowledge Base index');
+  setTimeout(() => showScreen('offboarding'), 1800);
+}
+
+</script>
+</body>
+</html>
